@@ -20,6 +20,7 @@ export type ScrapeEvent =
 				rooms: number | null;
 				location: string | null;
 				area: number | null;
+				imageUrl: string | null;
 				scrapeStatus: string;
 				band: string | null;
 			};

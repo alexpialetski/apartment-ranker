@@ -1,7 +1,10 @@
 import { Worker } from "bullmq";
 
 import { getUseCases } from "~/server/app/composition";
-import { getQueueConnection, QUEUE_NAME } from "~/server/shared/infrastructure/queue";
+import {
+	getQueueConnection,
+	QUEUE_NAME,
+} from "~/server/shared/infrastructure/queue";
 
 export type ScrapeJobPayload = { flatId: number };
 

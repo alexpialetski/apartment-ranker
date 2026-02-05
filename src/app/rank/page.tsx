@@ -14,9 +14,7 @@ export default function RankPage() {
 					Rank
 				</h1>
 
-				{rankedQuery.isLoading && (
-					<p className="text-white/70">Loading…</p>
-				)}
+				{rankedQuery.isLoading && <p className="text-white/70">Loading…</p>}
 
 				{rankedQuery.isSuccess && ranked.length === 0 && (
 					<p className="text-white/70">
@@ -28,12 +26,12 @@ export default function RankPage() {
 					<div className="flex flex-col gap-8">
 						{ranked.map(({ band, flats }) => (
 							<section key={band}>
-								<h2 className="mb-4 font-semibold text-xl text-white/90">
+								<h2 className="mb-4 font-semibold text-white/90 text-xl">
 									{band}
 								</h2>
 								<ul className="flex flex-col gap-3">
 									{flats.map((flat, index) => (
-										<li key={flat.id} className="flex items-center gap-3">
+										<li className="flex items-center gap-3" key={flat.id}>
 											<span className="w-6 text-right text-sm text-white/60">
 												{index + 1}
 											</span>

@@ -26,6 +26,7 @@ export const flats = createTable(
 		rooms: d.integer(),
 		location: d.text(),
 		area: d.real(),
+		imageUrl: d.text({ length: 2048 }),
 		scrapeStatus: d.text({ length: 32 }).notNull().default("pending"),
 		eloRating: d.real().notNull().default(1500),
 		/** Band = room count + price-per-m² range, e.g. "1-room_1800-1900". Used to compare/rank only within same band. */
@@ -35,6 +36,8 @@ export const flats = createTable(
 			.default(sql`(unixepoch())`)
 			.notNull(),
 		updatedAt: d.integer({ mode: "timestamp" }).$onUpdate(() => new Date()),
+		/** Set when flat is soft-deleted (Remove by URL). Comparisons history kept. */
+		deletedAt: d.integer({ mode: "timestamp" }),
 	}),
 	(t) => [
 		index("flat_scrape_status_idx").on(t.scrapeStatus),

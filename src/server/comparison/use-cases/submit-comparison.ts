@@ -1,6 +1,6 @@
-import { computeNewRatings } from "~/server/shared/lib/elo.service";
 import type { IComparisonRepository } from "~/server/comparison/port/comparison.repository";
 import type { IFlatRepository } from "~/server/flat/port/flat.repository";
+import { computeNewRatings } from "~/server/shared/lib/elo.service";
 
 export class NotFoundError extends Error {
 	constructor(message: string) {

@@ -20,9 +20,20 @@ export async function addFlatByUrl(
 	input: { realtUrl: string },
 ): Promise<Flat> {
 	const normalized = deps.normalizeUrl(input.realtUrl);
-	const existing = await deps.flatRepo.findByRealtUrl(normalized);
-	if (existing) {
+	const existingActive = await deps.flatRepo.findByRealtUrl(normalized);
+	if (existingActive) {
 		throw new AlreadyExistsError("A flat with this URL already exists");
+	}
+	const existingAny =
+		await deps.flatRepo.findByRealtUrlIncludingDeleted(normalized);
+	if (existingAny && existingAny.deletedAt != null) {
+		// Restore soft-deleted flat and re-scrape
+		const restored = await deps.flatRepo.update(existingAny.id, {
+			deletedAt: null,
+			scrapeStatus: "scraping",
+		});
+		await deps.scrapeQueue.add(restored.id);
+		return restored;
 	}
 	const flat = await deps.flatRepo.create({
 		realtUrl: normalized,

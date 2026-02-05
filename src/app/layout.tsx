@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 
 import { Nav } from "~/app/_components/nav";
+import { ScrapeSseProvider } from "~/app/_components/scrape-sse-provider";
 import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
@@ -24,8 +25,10 @@ export default function RootLayout({
 		<html className={`${geist.variable}`} lang="en">
 			<body>
 				<TRPCReactProvider>
-					<Nav />
-					{children}
+					<ScrapeSseProvider>
+						<Nav />
+						{children}
+					</ScrapeSseProvider>
 				</TRPCReactProvider>
 			</body>
 		</html>

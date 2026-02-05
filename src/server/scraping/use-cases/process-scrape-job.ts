@@ -1,9 +1,10 @@
 import type { IFlatRepository } from "~/server/flat/port/flat.repository";
-import type { IRealtScraper } from "~/server/scraping/port/scraper.port";
 import type {
 	IScrapeEventPublisher,
 	ScrapeSuccessFlatPayload,
 } from "~/server/scraping/port/scrape-events.port";
+import type { IRealtScraper } from "~/server/scraping/port/scraper.port";
+import type { ScrapeResult } from "~/server/shared/lib/scrape-result";
 
 const SCRAPE_TIMEOUT_MS = 25_000;
 
@@ -24,7 +25,7 @@ export async function processScrapeJob(
 		return;
 	}
 
-	let result;
+	let result: ScrapeResult;
 	try {
 		result = await Promise.race([
 			deps.scraper.scrape(flat.realtUrl),
@@ -49,6 +50,7 @@ export async function processScrapeJob(
 			rooms: result.data.rooms,
 			location: result.data.location,
 			area: result.data.area ?? null,
+			imageUrl: result.data.imageUrl ?? null,
 			scrapeStatus: "success",
 			band,
 		});
@@ -62,6 +64,7 @@ export async function processScrapeJob(
 				rooms: updated.rooms,
 				location: updated.location,
 				area: updated.area,
+				imageUrl: updated.imageUrl,
 				scrapeStatus: updated.scrapeStatus,
 				band: updated.band,
 			};

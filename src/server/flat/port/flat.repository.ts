@@ -7,18 +7,19 @@ export interface FlatUpdate {
 	rooms?: number | null;
 	location?: string | null;
 	area?: number | null;
+	imageUrl?: string | null;
 	scrapeStatus?: ScrapeStatus;
 	eloRating?: number;
 	band?: string | null;
+	deletedAt?: Date | null;
 }
 
 export interface IFlatRepository {
 	findByRealtUrl(url: string): Promise<Flat | null>;
+	/** Like findByRealtUrl but includes soft-deleted (for restore on re-add). */
+	findByRealtUrlIncludingDeleted(url: string): Promise<Flat | null>;
 	findById(id: number): Promise<Flat | null>;
-	create(data: {
-		realtUrl: string;
-		scrapeStatus: ScrapeStatus;
-	}): Promise<Flat>;
+	create(data: { realtUrl: string; scrapeStatus: ScrapeStatus }): Promise<Flat>;
 	update(id: number, data: Partial<FlatUpdate>): Promise<Flat>;
 	deleteByRealtUrl(url: string): Promise<boolean>;
 	listAll(): Promise<Flat[]>;

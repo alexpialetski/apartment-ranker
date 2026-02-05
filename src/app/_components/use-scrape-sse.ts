@@ -39,6 +39,7 @@ export function useScrapeSse() {
 						data.type === "flat_scraping_error"
 					) {
 						void utils.flat.listFlats.invalidate();
+						void utils.rank.getRankedFlats.invalidate();
 					}
 				} catch {
 					// ignore parse errors (e.g. comment lines)
@@ -70,5 +71,5 @@ export function useScrapeSse() {
 			}
 			es?.close();
 		};
-	}, [utils.flat.listFlats]);
+	}, [utils.flat.listFlats, utils.rank.getRankedFlats]);
 }

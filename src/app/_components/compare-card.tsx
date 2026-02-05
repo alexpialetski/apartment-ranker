@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import type { RouterOutputs } from "~/trpc/react";
 
 type Flat = RouterOutputs["flat"]["listFlats"][number];
@@ -8,6 +10,18 @@ type Flat = RouterOutputs["flat"]["listFlats"][number];
 export function CompareCard({ flat }: { flat: Flat }) {
 	return (
 		<div className="rounded-lg border border-white/20 bg-white/5 p-4">
+			{flat.imageUrl && (
+				<div className="relative mb-3 size-24 overflow-hidden rounded-md bg-white/5 sm:size-32">
+					<Image
+						alt=""
+						className="object-cover"
+						fill
+						sizes="128px"
+						src={flat.imageUrl}
+						unoptimized
+					/>
+				</div>
+			)}
 			<div className="flex flex-col gap-1">
 				<div className="flex items-baseline gap-2">
 					<span className="font-semibold text-white">
@@ -21,6 +35,7 @@ export function CompareCard({ flat }: { flat: Flat }) {
 				</div>
 				<div className="text-sm text-white/80">
 					{flat.rooms != null ? `${flat.rooms} room(s)` : ""}
+					{flat.area != null ? ` · ${flat.area} m²` : ""}
 					{flat.location ? ` · ${flat.location}` : ""}
 				</div>
 			</div>

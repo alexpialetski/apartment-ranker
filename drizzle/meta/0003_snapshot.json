@@ -1,8 +1,8 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "fc67f924-a3f8-45fc-8b12-019358c13dda",
-	"prevId": "ddf605f8-5794-4c35-9565-faddaa7abb5d",
+	"id": "7bd48055-a9b7-4dab-9ad3-444037f06c3c",
+	"prevId": "903d18c2-39df-4948-bfb6-91e7271abf69",
 	"tables": {
 		"apartment-ranker_comparison": {
 			"name": "apartment-ranker_comparison",
@@ -114,6 +114,13 @@
 					"notNull": false,
 					"autoincrement": false
 				},
+				"imageUrl": {
+					"name": "imageUrl",
+					"type": "text(2048)",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
 				"scrapeStatus": {
 					"name": "scrapeStatus",
 					"type": "text(32)",
@@ -147,6 +154,13 @@
 				},
 				"updatedAt": {
 					"name": "updatedAt",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"deletedAt": {
+					"name": "deletedAt",
 					"type": "integer",
 					"primaryKey": false,
 					"notNull": false,

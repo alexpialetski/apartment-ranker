@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 
-import type { ScrapedFlatData, ScrapeResult } from "~/server/shared/lib/scrape-result";
+import type { ScrapeResult } from "~/server/shared/lib/scrape-result";
 
 const FETCH_TIMEOUT_MS = 15_000;
 const USER_AGENT =
@@ -17,6 +17,10 @@ interface NextDataObject {
 	areaTotal?: number;
 	townDistrictName?: string;
 	townSubDistrictName?: string;
+	/** First photo URL for card thumbnail. Realt.by may use photos array or single image field. */
+	photos?: Array<{ url?: string; imageUrl?: string }>;
+	photo?: { url?: string };
+	imageUrl?: string;
 	[key: string]: unknown;
 }
 
@@ -96,6 +100,12 @@ export async function scrapeRealtListing(url: string): Promise<ScrapeResult> {
 			.join(", ") ||
 		"—";
 
+	// First image URL for card thumbnail
+	const imageUrl =
+		typeof obj.imageUrl === "string" && obj.imageUrl.trim()
+			? obj.imageUrl.trim()
+			: (obj.photos?.[0]?.url ?? obj.photos?.[0]?.imageUrl ?? obj.photo?.url);
+
 	return {
 		success: true,
 		data: {
@@ -104,8 +114,12 @@ export async function scrapeRealtListing(url: string): Promise<ScrapeResult> {
 			rooms,
 			location,
 			...(areaTotal != null && areaTotal > 0 && { area: areaTotal }),
+			...(typeof imageUrl === "string" && imageUrl && { imageUrl }),
 		},
 	};
 }
 
-export type { ScrapedFlatData, ScrapeResult } from "~/server/shared/lib/scrape-result";
+export type {
+	ScrapedFlatData,
+	ScrapeResult,
+} from "~/server/shared/lib/scrape-result";

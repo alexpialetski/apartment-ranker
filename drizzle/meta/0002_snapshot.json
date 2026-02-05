@@ -1,8 +1,8 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "fc67f924-a3f8-45fc-8b12-019358c13dda",
-	"prevId": "ddf605f8-5794-4c35-9565-faddaa7abb5d",
+	"id": "903d18c2-39df-4948-bfb6-91e7271abf69",
+	"prevId": "fc67f924-a3f8-45fc-8b12-019358c13dda",
 	"tables": {
 		"apartment-ranker_comparison": {
 			"name": "apartment-ranker_comparison",
@@ -110,6 +110,13 @@
 				"area": {
 					"name": "area",
 					"type": "real",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"imageUrl": {
+					"name": "imageUrl",
+					"type": "text(2048)",
 					"primaryKey": false,
 					"notNull": false,
 					"autoincrement": false

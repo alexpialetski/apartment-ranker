@@ -4,6 +4,7 @@ export interface ScrapedFlatData {
 	rooms: number;
 	location: string;
 	area?: number;
+	imageUrl?: string;
 }
 
 export type ScrapeResult =

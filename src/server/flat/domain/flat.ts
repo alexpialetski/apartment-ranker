@@ -15,9 +15,11 @@ export interface Flat {
 	rooms: number | null;
 	location: string | null;
 	area: number | null;
+	imageUrl: string | null;
 	scrapeStatus: ScrapeStatus;
 	eloRating: number;
 	band: string | null;
 	createdAt: Date;
 	updatedAt: Date | null;
+	deletedAt: Date | null;
 }

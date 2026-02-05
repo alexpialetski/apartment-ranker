@@ -1,5 +1,5 @@
-import type { NextRequest } from "next/server";
 import IORedis from "ioredis";
+import type { NextRequest } from "next/server";
 
 import { env } from "~/env";
 import { SCRAPE_EVENTS_CHANNEL } from "~/server/shared/infrastructure/sse/scrape-events";

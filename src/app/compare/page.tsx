@@ -22,7 +22,7 @@ export default function ComparePage() {
 	const pair = pairQuery.data;
 	const bands = bandsQuery.data ?? [];
 	const isLoading = pairQuery.isLoading || pairQuery.isFetching;
-	const hasPair = pair && pair.left && pair.right;
+	const hasPair = pair?.left && pair.right;
 
 	const handleChoice = useCallback(
 		(winnerId: number, loserId: number) => {
@@ -45,8 +45,8 @@ export default function ComparePage() {
 					<select
 						className="rounded border border-white/20 bg-white/10 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-white/30"
 						id="band"
-						value={band}
 						onChange={(e) => setBand(e.target.value)}
+						value={band}
 					>
 						<option value="">Select a band</option>
 						{bands.map((b) => (
@@ -86,11 +86,10 @@ export default function ComparePage() {
 							<div className="text-sm text-white/70">Left</div>
 							<CompareCard flat={pair.left} />
 							<button
+								aria-label="Left is better"
 								className="rounded bg-white/20 px-4 py-2 font-medium hover:bg-white/30 disabled:opacity-50"
 								disabled={submitComparison.isPending}
-								onClick={() =>
-									handleChoice(pair.left.id, pair.right.id)
-								}
+								onClick={() => handleChoice(pair.left.id, pair.right.id)}
 								type="button"
 							>
 								{submitComparison.isPending ? "Submitting…" : "Left is better"}
@@ -100,14 +99,23 @@ export default function ComparePage() {
 							<div className="text-sm text-white/70">Right</div>
 							<CompareCard flat={pair.right} />
 							<button
+								aria-label="Right is better"
 								className="rounded bg-white/20 px-4 py-2 font-medium hover:bg-white/30 disabled:opacity-50"
 								disabled={submitComparison.isPending}
-								onClick={() =>
-									handleChoice(pair.right.id, pair.left.id)
-								}
+								onClick={() => handleChoice(pair.right.id, pair.left.id)}
 								type="button"
 							>
 								{submitComparison.isPending ? "Submitting…" : "Right is better"}
+							</button>
+						</div>
+						<div className="flex flex-col justify-end">
+							<button
+								aria-label="Skip this pair and show another"
+								className="rounded border border-white/20 px-4 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white"
+								onClick={() => void pairQuery.refetch()}
+								type="button"
+							>
+								Skip / Can’t decide
 							</button>
 						</div>
 					</section>

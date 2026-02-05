@@ -3,14 +3,11 @@
 import { useState } from "react";
 
 import { FlatCard } from "~/app/_components/flat-card";
-import { useScrapeSse } from "~/app/_components/use-scrape-sse";
 import { api } from "~/trpc/react";
 
-export function AddAndListScreen() {
+export default function FlatsPage() {
 	const [addUrl, setAddUrl] = useState("");
 	const [removeUrl, setRemoveUrl] = useState("");
-
-	useScrapeSse();
 
 	const utils = api.useUtils();
 

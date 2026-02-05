@@ -1,8 +1,8 @@
-import { publishScrapeEvent } from "~/server/shared/infrastructure/sse/scrape-events";
 import type {
 	IScrapeEventPublisher,
 	ScrapeSuccessFlatPayload,
 } from "~/server/scraping/port/scrape-events.port";
+import { publishScrapeEvent } from "~/server/shared/infrastructure/sse/scrape-events";
 
 export function createScrapeEventPublisher(): IScrapeEventPublisher {
 	return {
@@ -18,6 +18,7 @@ export function createScrapeEventPublisher(): IScrapeEventPublisher {
 					rooms: flat.rooms,
 					location: flat.location,
 					area: flat.area,
+					imageUrl: flat.imageUrl,
 					scrapeStatus: flat.scrapeStatus,
 					band: flat.band,
 				},

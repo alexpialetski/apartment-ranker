@@ -1,20 +1,34 @@
 {
-  "version": "7",
-  "dialect": "sqlite",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "6",
-      "when": 1770279805529,
-      "tag": "0000_bitter_ben_urich",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1770295803906,
-      "tag": "0001_concerned_smiling_tiger",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "sqlite",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "6",
+			"when": 1770279805529,
+			"tag": "0000_bitter_ben_urich",
+			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "6",
+			"when": 1770295803906,
+			"tag": "0001_concerned_smiling_tiger",
+			"breakpoints": true
+		},
+		{
+			"idx": 2,
+			"version": "6",
+			"when": 1770303502800,
+			"tag": "0002_kind_bulldozer",
+			"breakpoints": true
+		},
+		{
+			"idx": 3,
+			"version": "6",
+			"when": 1770303554791,
+			"tag": "0003_chunky_union_jack",
+			"breakpoints": true
+		}
+	]
 }

@@ -1,14 +1,15 @@
 import { eq, or } from "drizzle-orm";
 import type { LibSQLDatabase } from "drizzle-orm/libsql";
+import type { IComparisonRepository } from "~/server/comparison/port/comparison.repository";
 import type * as schema from "~/server/shared/infrastructure/db/schema";
 import { comparisons } from "~/server/shared/infrastructure/db/schema";
-import type { Comparison } from "~/server/comparison/domain/comparison";
-import type { IComparisonRepository } from "~/server/comparison/port/comparison.repository";
 
 function toDate(value: Date | number | null | undefined): Date {
 	if (value == null) return new Date(0);
 	if (value instanceof Date) return value;
-	return new Date(typeof value === "number" && value < 1e12 ? value * 1000 : value);
+	return new Date(
+		typeof value === "number" && value < 1e12 ? value * 1000 : value,
+	);
 }
 
 export function createComparisonRepository(
@@ -34,10 +35,7 @@ export function createComparisonRepository(
 				.select({ id: comparisons.id })
 				.from(comparisons)
 				.where(
-					or(
-						eq(comparisons.winnerId, flatId),
-						eq(comparisons.loserId, flatId),
-					),
+					or(eq(comparisons.winnerId, flatId), eq(comparisons.loserId, flatId)),
 				);
 			return rows.length;
 		},

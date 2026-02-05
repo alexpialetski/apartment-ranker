@@ -1,11 +1,5 @@
-import { HydrateClient } from "~/trpc/server";
-
-import { AddAndListScreen } from "./_components/add-and-list-screen";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-	return (
-		<HydrateClient>
-			<AddAndListScreen />
-		</HydrateClient>
-	);
+	redirect("/flats");
 }
