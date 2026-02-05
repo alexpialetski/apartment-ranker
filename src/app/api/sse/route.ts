@@ -3,6 +3,9 @@ import type { NextRequest } from "next/server";
 
 import { env } from "~/env";
 import { SCRAPE_EVENTS_CHANNEL } from "~/server/shared/infrastructure/sse/scrape-events";
+import { createLogger } from "~/server/shared/lib/logger";
+
+const log = createLogger("sse");
 
 /**
  * Server-Sent Events endpoint for scrape job completion.
@@ -11,6 +14,7 @@ import { SCRAPE_EVENTS_CHANNEL } from "~/server/shared/infrastructure/sse/scrape
 export async function GET(request: NextRequest) {
 	const stream = new ReadableStream({
 		start(controller) {
+			log.debug("SSE client connected");
 			const encoder = new TextEncoder();
 
 			const sendData = (data: unknown) => {
@@ -27,7 +31,7 @@ export async function GET(request: NextRequest) {
 				maxRetriesPerRequest: null,
 			});
 			subscriber.subscribe(SCRAPE_EVENTS_CHANNEL, (err) => {
-				if (err) console.error("[sse] Redis subscribe error:", err);
+				if (err) log.error({ err }, "Redis subscribe error");
 			});
 			subscriber.on("message", (_channel, message) => {
 				try {
@@ -48,6 +52,7 @@ export async function GET(request: NextRequest) {
 			}, 30_000);
 
 			const cleanup = () => {
+				log.debug("SSE client disconnected");
 				clearInterval(keepAlive);
 				subscriber.unsubscribe(SCRAPE_EVENTS_CHANNEL);
 				subscriber.quit().catch(() => {});

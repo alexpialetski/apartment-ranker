@@ -5,7 +5,7 @@ import { NotFoundError } from "~/server/comparison/use-cases/submit-comparison";
 
 export const comparisonRouter = createTRPCRouter({
 	getComparisonPair: publicProcedure
-		.input(z.object({ band: z.string() }))
+		.input(z.object({ band: z.string().optional() }))
 		.query(async ({ ctx, input }) => {
 			const pair = await ctx.useCases.getComparisonPair(input);
 			return pair;

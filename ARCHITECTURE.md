@@ -2,6 +2,8 @@
 
 This document describes the server-side architecture, directory layout, and how requests and background jobs flow through the system.
 
+For an introduction to **Clean Architecture** (terms, definitions, and how we implement them here), see **[CLEAN-ARCHITECTURE.md](./CLEAN-ARCHITECTURE.md)**.
+
 ## Overview
 
 The backend follows **Clean Architecture** with a **feature-sliced** layout:

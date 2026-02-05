@@ -21,10 +21,9 @@ export default function ComparePage({
 	const [band, setBand] = useState<string>("");
 
 	const bandsQuery = api.comparison.getBands.useQuery();
-	const pairQuery = api.comparison.getComparisonPair.useQuery(
-		{ band },
-		{ enabled: !!band },
-	);
+	const pairQuery = api.comparison.getComparisonPair.useQuery({
+		band: band || undefined,
+	});
 	const submitComparison = api.comparison.submitComparison.useMutation({
 		onSuccess: () => {
 			void pairQuery.refetch();
@@ -52,7 +51,7 @@ export default function ComparePage({
 
 				<section className="mb-8">
 					<label className="mb-2 block text-sm text-text-muted" htmlFor="band">
-						Band
+						Band (optional)
 					</label>
 					<select
 						className="rounded border border-border bg-surface-elevated px-3 py-2 text-text focus:outline-none focus:ring-2 focus:ring-accent"
@@ -60,7 +59,7 @@ export default function ComparePage({
 						onChange={(e) => setBand(e.target.value)}
 						value={band}
 					>
-						<option value="">Select a band</option>
+						<option value="">Any band</option>
 						{bands.map((b) => (
 							<option key={b} value={b}>
 								{b}
@@ -69,13 +68,7 @@ export default function ComparePage({
 					</select>
 				</section>
 
-				{!band && (
-					<p className="text-white/70">
-						Select a band to see two flats to compare.
-					</p>
-				)}
-
-				{band && isLoading && (
+				{isLoading && (
 					<div className="flex items-center gap-3 py-8">
 						<div
 							aria-hidden
@@ -85,14 +78,15 @@ export default function ComparePage({
 					</div>
 				)}
 
-				{band && !isLoading && !hasPair && (
+				{!isLoading && !hasPair && (
 					<p className="text-text-muted">
-						Need at least 2 successfully scraped flats in this band. Add flats
-						and ensure they’re in the same room/price band.
+						Need at least 2 successfully scraped flats
+						{band ? " in this band" : ""}. Add flats and ensure they’re in the
+						same room/price band.
 					</p>
 				)}
 
-				{band && !isLoading && hasPair && (
+				{!isLoading && hasPair && (
 					<section className="flex flex-col gap-6 sm:flex-row sm:gap-8">
 						<div className="flex flex-1 flex-col gap-4">
 							<div className="text-sm text-text-subtle">Left</div>

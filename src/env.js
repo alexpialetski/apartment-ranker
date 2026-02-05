@@ -8,6 +8,9 @@ export const env = createEnv({
 	 */
 	server: {
 		DATABASE_URL: z.string().url(),
+		LOG_LEVEL: z
+			.enum(["trace", "debug", "info", "warn", "error", "fatal"])
+			.default("info"),
 		NODE_ENV: z
 			.enum(["development", "test", "production"])
 			.default("development"),
@@ -29,6 +32,7 @@ export const env = createEnv({
 	 */
 	runtimeEnv: {
 		DATABASE_URL: process.env.DATABASE_URL,
+		LOG_LEVEL: process.env.LOG_LEVEL,
 		NODE_ENV: process.env.NODE_ENV,
 		REDIS_URL: process.env.REDIS_URL,
 		// NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,

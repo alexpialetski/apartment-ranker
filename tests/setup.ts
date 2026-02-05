@@ -5,6 +5,8 @@
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
+process.env.LOG_LEVEL = "warn";
+
 const testDbPath = path.join(process.cwd(), ".tmp", "integration.db");
 if (!process.env.DATABASE_URL) {
 	process.env.DATABASE_URL = pathToFileURL(testDbPath).href;

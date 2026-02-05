@@ -4,9 +4,11 @@ import type {
 	ScrapeSuccessFlatPayload,
 } from "~/server/scraping/port/scrape-events.port";
 import type { IRealtScraper } from "~/server/scraping/port/scraper.port";
+import { createLogger } from "~/server/shared/lib/logger";
 import type { ScrapeResult } from "~/server/shared/lib/scrape-result";
 
 const SCRAPE_TIMEOUT_MS = 25_000;
+const log = createLogger("process-scrape-job");
 
 export interface ProcessScrapeJobDeps {
 	flatRepo: IFlatRepository;
@@ -37,12 +39,14 @@ export async function processScrapeJob(
 			),
 		]);
 	} catch (err) {
+		log.error({ flatId, error: String(err) }, "Scrape failed");
 		await deps.flatRepo.update(flatId, { scrapeStatus: "error" });
 		deps.eventPublisher.publishError(flatId, String(err));
 		return;
 	}
 
 	if (result.success) {
+		log.debug({ flatId }, "Scrape success");
 		const band = deps.getBandLabel(result.data.rooms, result.data.pricePerSqm);
 		await deps.flatRepo.update(flatId, {
 			price: result.data.price,
@@ -71,6 +75,7 @@ export async function processScrapeJob(
 			deps.eventPublisher.publishSuccess(flatId, payload);
 		}
 	} else {
+		log.error({ flatId, error: result.error }, "Scrape failed");
 		await deps.flatRepo.update(flatId, { scrapeStatus: "error" });
 		deps.eventPublisher.publishError(flatId, result.error);
 	}

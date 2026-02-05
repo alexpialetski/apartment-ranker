@@ -11,6 +11,9 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { getUseCases } from "~/server/app/composition";
+import { createLogger } from "~/server/shared/lib/logger";
+
+const log = createLogger("trpc");
 
 /**
  * 1. CONTEXT
@@ -92,7 +95,7 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 	const result = await next();
 
 	const end = Date.now();
-	console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
+	log.debug({ path, durationMs: end - start }, "Procedure executed");
 
 	return result;
 });

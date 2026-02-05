@@ -5,8 +5,11 @@ import {
 	getQueueConnection,
 	QUEUE_NAME,
 } from "~/server/shared/infrastructure/queue";
+import { createLogger } from "~/server/shared/lib/logger";
 
 export type ScrapeJobPayload = { flatId: number };
+
+const log = createLogger("scrape-flats");
 
 let workerInstance: Worker<ScrapeJobPayload> | null = null;
 
@@ -19,15 +22,15 @@ export function startWorker(): void {
 		QUEUE_NAME,
 		async (job) => {
 			const { flatId } = job.data;
-			console.log("[scrape-flats] Processing job for flatId:", flatId);
+			log.debug({ flatId }, "Processing job");
 			await useCases.processScrapeJob({ flatId });
-			console.log("[scrape-flats] Done for flatId", flatId);
+			log.debug({ flatId }, "Done");
 		},
 		{ connection, concurrency: 2 },
 	);
 
 	workerInstance.on("failed", (job, err) => {
-		console.error("[scrape-flats] Job failed:", job?.id, err);
+		log.error({ jobId: job?.id, err }, "Job failed");
 	});
 }
 

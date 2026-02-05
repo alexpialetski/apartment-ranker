@@ -6,12 +6,16 @@ export async function register(): Promise<void> {
 	if (process.env.NEXT_RUNTIME === "nodejs") {
 		try {
 			const { startWorker } = await import("./src/server/app/worker");
+			const { createLogger } = await import("./src/server/shared/lib/logger");
+			const log = createLogger("apartment-ranker");
 			startWorker();
-			console.log(
-				"[apartment-ranker] Scrape worker started (listening for jobs)",
-			);
+			log.info("Scrape worker started (listening for jobs)");
 		} catch (err) {
-			console.error("[apartment-ranker] Failed to start scrape worker:", err);
+			const { createLogger } = await import("./src/server/shared/lib/logger");
+			createLogger("apartment-ranker").error(
+				{ err },
+				"Failed to start scrape worker",
+			);
 		}
 	}
 }

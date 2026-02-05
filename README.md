@@ -1,20 +1,21 @@
 # Apartment Ranker
 
-Smart comparison and ranking of flats (Realt.by) in Minsk. Add by URL, compare in pairs, get a ranked list within price and room-count bands.
+Smart comparison and ranking of flats (Realt.by) in Minsk. Add apartments by URL, compare them in pairs, and get a ranked list within price-per-m² and room-count bands.
 
-**Project documentation (requirements, UX, tech, flows):**
+## What it does
 
-- [REQUIREMENTS.md](./REQUIREMENTS.md) — Overview and index
-- [UX-REQUIREMENTS.md](./UX-REQUIREMENTS.md) — Screens and UX
-- [TECH-DECISIONS.md](./TECH-DECISIONS.md) — Stack and algorithms
-- [BUSINESS-FLOWS.md](./BUSINESS-FLOWS.md) — Add, remove, compare, rank, scrape
-- [ROADMAP.md](./ROADMAP.md) — Implementation roadmap
+- **Add & list flats** — Paste a Realt.by listing URL; the app scrapes price, price/m², rooms, and location. Flats appear in a list with live updates when scraping finishes (SSE).
+- **Compare** — View two flats from the same band (same room count and price band); choose the better one. Elo ratings are updated incrementally.
+- **Rank** — See all successfully scraped flats ordered by Elo within each band (e.g. “1-room, 1.8–2k”, “2-room, 1.5–1.8k”).
+- **Manage** — Remove by URL; reload (re-scrape) a single flat from its card.
 
----
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — Server layout, request/job flows, directory structure.
+- **[CLEAN-ARCHITECTURE.md](./CLEAN-ARCHITECTURE.md)** — Clean Architecture concepts, terms (domain, port, use case, adapter), and how we use them in this project.
 
 ## How to run locally
 
 1. **Clone and install**
+
    ```bash
    npm install
    ```
@@ -32,29 +33,22 @@ Smart comparison and ranking of flats (Realt.by) in Minsk. Add by URL, compare i
    - Or install and run Redis locally (e.g. `redis-server`).
 
 4. **Database**
+
    ```bash
    npm run db:migrate
    ```
+
    (Or `npm run db:push` to sync schema without migration files.)
 
 5. **Dev server**
    ```bash
    npm run dev
    ```
+
    - App: [http://localhost:3000](http://localhost:3000).
    - The BullMQ worker runs in the same process (started via `instrumentation.ts`). Add a Realt.by listing URL on the Add & List screen to enqueue a scrape job and see cards update when the worker finishes.
 
-**Troubleshooting: flat stuck on “Scraping…”**
-
-- In the terminal where `npm run dev` is running you should see:
-  - `[apartment-ranker] Scrape worker started (listening for jobs)` when the server starts.
-  - `[scrape-flats] Processing job for flatId: <id>` when a job is picked up.
-  - `[scrape-flats] Done for flatId <id> success|error` when the scrape finishes.
-- If you never see “Scrape worker started”, the worker did not start (e.g. instrumentation not running or Redis connection failed on startup). Check that `REDIS_URL` in `.env` is correct and Redis is reachable.
-- If you see “Processing job” but never “Done”, the scraper may be timing out (e.g. Realt.by slow or blocking). After ~25s the job should fail and the card will show “Couldn’t load” with a Reload button. Check the terminal for `[scrape-flats] Scraper threw...` or `Scrape failed for flat`.
-- If the worker never logs “Processing job”, jobs are not being consumed (same Redis? wrong queue?). Restart the dev server and try adding a flat again.
-
-**Other commands**
+### Other commands
 
 - `npm run build` — Production build (requires `REDIS_URL` in env).
 - `npm run db:studio` — Open Drizzle Studio to inspect the SQLite DB.
@@ -62,30 +56,4 @@ Smart comparison and ranking of flats (Realt.by) in Minsk. Add by URL, compare i
 
 ---
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
-
-## What's next? How do I make an app with this?
-
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
-
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
-
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+This is a [T3 Stack](https://create.t3.gg/) project (Next.js, tRPC, Drizzle, Tailwind). See [create.t3.gg](https://create.t3.gg/) for docs and deployment guides.

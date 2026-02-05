@@ -4,6 +4,9 @@ import type { NextRequest } from "next/server";
 import { env } from "~/env";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
+import { createLogger } from "~/server/shared/lib/logger";
+
+const log = createLogger("trpc");
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -24,8 +27,9 @@ const handler = (req: NextRequest) =>
 		onError:
 			env.NODE_ENV === "development"
 				? ({ path, error }) => {
-						console.error(
-							`❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
+						log.error(
+							{ path: path ?? "<no-path>", message: error.message },
+							"tRPC procedure failed",
 						);
 					}
 				: undefined,

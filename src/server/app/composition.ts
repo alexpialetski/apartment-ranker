@@ -43,7 +43,7 @@ export interface UseCasesContainer {
 	reloadFlat: (input: { id: number }) => Promise<{ ok: true }>;
 	processScrapeJob: (input: { flatId: number }) => Promise<void>;
 	getComparisonPair: (input: {
-		band: string;
+		band?: string;
 	}) => Promise<ComparisonPair | null>;
 	submitComparison: (input: {
 		winnerId: number;
@@ -86,7 +86,10 @@ export function buildUseCases(deps?: BuildUseCasesDeps): UseCasesContainer {
 				input,
 			),
 		getComparisonPair: (input) =>
-			getComparisonPairUC.getComparisonPair({ flatRepo }, input),
+			getComparisonPairUC.getComparisonPair(
+				{ flatRepo, getAllBandLabels },
+				input,
+			),
 		submitComparison: (input) =>
 			submitComparisonUC.submitComparison({ flatRepo, comparisonRepo }, input),
 		getRankedFlats: () =>

@@ -5,6 +5,9 @@
  */
 
 import { getQueueConnection } from "~/server/shared/infrastructure/queue";
+import { createLogger } from "~/server/shared/lib/logger";
+
+const log = createLogger("sse");
 
 export const SCRAPE_EVENTS_CHANNEL = "apartment-ranker:scrape-events";
 
@@ -36,6 +39,6 @@ export function publishScrapeEvent(event: ScrapeEvent): void {
 		const redis = getQueueConnection();
 		redis.publish(SCRAPE_EVENTS_CHANNEL, JSON.stringify(event));
 	} catch (err) {
-		console.error("[sse] Redis publish error:", err);
+		log.error({ err }, "Redis publish error");
 	}
 }
