@@ -51,39 +51,3 @@ export function getBandConfig(): BandConfig {
 export function setBandConfig(config: BandConfig): void {
 	bandConfig = config;
 }
-
-/**
- * Returns a stable band identifier for a flat, or null if it doesn't fall in any band.
- * Used when saving a scraped flat and for grouping in Compare/Rank.
- * Band is stored in the DB as a string like "1-room_1800-1900".
- *
- * @example getBandLabel(1, 1850) => "1-room_1800-1900"
- */
-export function getBandLabel(
-	rooms: number,
-	pricePerSqm: number,
-): string | null {
-	const { roomCounts, priceBands } = bandConfig;
-	if (!roomCounts.includes(rooms)) return null;
-
-	const band = priceBands.find(
-		(b) => pricePerSqm >= b.minPricePerSqm && pricePerSqm < b.maxPricePerSqm,
-	);
-	if (!band) return null;
-
-	return `${rooms}-room_${band.label}`;
-}
-
-/**
- * All possible band labels (for API / band selector in Compare).
- * Order: by room count, then by price range.
- */
-export function getAllBandLabels(): string[] {
-	const labels: string[] = [];
-	for (const rooms of bandConfig.roomCounts) {
-		for (const band of bandConfig.priceBands) {
-			labels.push(`${rooms}-room_${band.label}`);
-		}
-	}
-	return labels;
-}

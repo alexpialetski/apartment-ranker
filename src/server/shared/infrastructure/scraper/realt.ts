@@ -1,23 +1,6 @@
 import * as cheerio from "cheerio";
 
-/**
- * Scrape a Realt.by listing page for flat data.
- * Realt.by is a Next.js app: the listing is in <script id="__NEXT_DATA__"> as JSON
- * at props.pageProps.object (see scripts/apartment_scraper.py in personal/apartment-ranker).
- * No DB access; returns structured result.
- */
-
-export interface ScrapedFlatData {
-	price: number;
-	pricePerSqm: number;
-	rooms: number;
-	location: string;
-	area?: number;
-}
-
-export type ScrapeResult =
-	| { success: true; data: ScrapedFlatData }
-	| { success: false; error: string };
+import type { ScrapedFlatData, ScrapeResult } from "~/server/shared/lib/scrape-result";
 
 const FETCH_TIMEOUT_MS = 15_000;
 const USER_AGENT =
@@ -124,3 +107,5 @@ export async function scrapeRealtListing(url: string): Promise<ScrapeResult> {
 		},
 	};
 }
+
+export type { ScrapedFlatData, ScrapeResult } from "~/server/shared/lib/scrape-result";

@@ -10,7 +10,7 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { db } from "~/server/db";
+import { getUseCases } from "~/server/app/composition";
 
 /**
  * 1. CONTEXT
@@ -25,8 +25,9 @@ import { db } from "~/server/db";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+	const useCases = getUseCases();
 	return {
-		db,
+		useCases,
 		...opts,
 	};
 };

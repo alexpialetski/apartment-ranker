@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import IORedis from "ioredis";
 
 import { env } from "~/env";
-import { SCRAPE_EVENTS_CHANNEL } from "~/server/sse/scrape-events";
+import { SCRAPE_EVENTS_CHANNEL } from "~/server/shared/infrastructure/sse/scrape-events";
 
 /**
  * Server-Sent Events endpoint for scrape job completion.

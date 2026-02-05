@@ -5,7 +5,7 @@
 export async function register(): Promise<void> {
 	if (process.env.NEXT_RUNTIME === "nodejs") {
 		try {
-			const { startWorker } = await import("./src/server/worker");
+			const { startWorker } = await import("./src/server/app/worker");
 			startWorker();
 			console.log("[apartment-ranker] Scrape worker started (listening for jobs)");
 		} catch (err) {

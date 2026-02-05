@@ -1,4 +1,6 @@
+import { comparisonRouter } from "~/server/api/routers/comparison";
 import { flatRouter } from "~/server/api/routers/flat";
+import { rankRouter } from "~/server/api/routers/rank";
 import {
 	createCallerFactory,
 	createTRPCRouter,
@@ -13,6 +15,8 @@ import {
 export const appRouter = createTRPCRouter({
 	health: publicProcedure.query(() => ({ ok: true })),
 	flat: flatRouter,
+	comparison: comparisonRouter,
+	rank: rankRouter,
 });
 
 // export type definition of API

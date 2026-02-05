@@ -4,7 +4,7 @@
  * duplicate delivery when they share a process.
  */
 
-import { getQueueConnection } from "~/server/queue";
+import { getQueueConnection } from "~/server/shared/infrastructure/queue";
 
 export const SCRAPE_EVENTS_CHANNEL = "apartment-ranker:scrape-events";
 
