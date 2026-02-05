@@ -10,6 +10,8 @@ export interface FlatUpdate {
 	imageUrl?: string | null;
 	scrapeStatus?: ScrapeStatus;
 	eloRating?: number;
+	ratingDeviation?: number;
+	volatility?: number;
 	band?: string | null;
 	deletedAt?: Date | null;
 }

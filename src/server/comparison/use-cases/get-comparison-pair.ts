@@ -11,7 +11,8 @@ export interface ComparisonPair {
 }
 
 /**
- * Returns two flats from the same band (random pair). Returns null if fewer than 2 success flats in band.
+ * Returns two flats from the same band: one with highest rating deviation (least compared),
+ * the other at random from the rest. Returns null if fewer than 2 success flats in band.
  */
 export async function getComparisonPair(
 	deps: GetComparisonPairDeps,
@@ -19,18 +20,13 @@ export async function getComparisonPair(
 ): Promise<ComparisonPair | null> {
 	const flats = await deps.flatRepo.listSuccessByBand(input.band);
 	if (flats.length < 2) return null;
-	const [i, j] = pickTwoRandomIndices(flats.length);
-	const left = flats[i];
-	const right = flats[j];
-	if (!left || !right) return null;
-	return { left, right };
-}
 
-function pickTwoRandomIndices(n: number): [number, number] {
-	const i = Math.floor(Math.random() * n);
-	let j = Math.floor(Math.random() * n);
-	while (j === i) {
-		j = Math.floor(Math.random() * n);
-	}
-	return [i, j];
+	const maxRd = Math.max(...flats.map((f) => f.ratingDeviation));
+	const withMaxRd = flats.filter((f) => f.ratingDeviation === maxRd);
+	const left = withMaxRd[Math.floor(Math.random() * withMaxRd.length)];
+	if (!left) return null;
+	const rest = flats.filter((f) => f.id !== left.id);
+	const right = rest[Math.floor(Math.random() * rest.length)];
+	if (!right) return null;
+	return { left, right };
 }

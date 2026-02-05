@@ -4,4 +4,20 @@
 	--font-sans:
 		var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
 		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	/* Apartment Ranker: light, editorial theme */
+	--color-surface: #faf9f7;
+	--color-surface-elevated: #ffffff;
+	--color-border: #e7e5e1;
+	--color-text: #1c1917;
+	--color-text-muted: #57534e;
+	--color-text-subtle: #78716c;
+	--color-accent: #0f766e;
+	--color-accent-hover: #0d9488;
+	--color-accent-muted: #ccfbf1;
+	--color-error: #b91c1c;
+}
+
+body {
+	background-color: var(--color-surface);
+	color: var(--color-text);
 }

@@ -18,9 +18,16 @@ const geist = Geist({
 	variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+type RootLayoutProps = Readonly<{
+	children: React.ReactNode;
+	params?: Promise<Record<string, string | string[]>>;
+}>;
+
+export default async function RootLayout({
 	children,
-}: Readonly<{ children: React.ReactNode }>) {
+	params,
+}: RootLayoutProps) {
+	if (params) await params;
 	return (
 		<html className={`${geist.variable}`} lang="en">
 			<body>

@@ -1,4 +1,4 @@
-import { eq, or } from "drizzle-orm";
+import { eq, inArray, or } from "drizzle-orm";
 import type { LibSQLDatabase } from "drizzle-orm/libsql";
 import type { IComparisonRepository } from "~/server/comparison/port/comparison.repository";
 import type * as schema from "~/server/shared/infrastructure/db/schema";
@@ -38,6 +38,23 @@ export function createComparisonRepository(
 					or(eq(comparisons.winnerId, flatId), eq(comparisons.loserId, flatId)),
 				);
 			return rows.length;
+		},
+
+		async listByFlatIds(flatIds: number[]) {
+			if (flatIds.length === 0) return [];
+			const rows = await db
+				.select({
+					winnerId: comparisons.winnerId,
+					loserId: comparisons.loserId,
+				})
+				.from(comparisons)
+				.where(
+					or(
+						inArray(comparisons.winnerId, flatIds),
+						inArray(comparisons.loserId, flatIds),
+					),
+				);
+			return rows;
 		},
 	};
 }

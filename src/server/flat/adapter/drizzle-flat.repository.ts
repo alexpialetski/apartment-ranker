@@ -16,6 +16,9 @@ function toDate(value: Date | number | null | undefined): Date {
 	);
 }
 
+const DEFAULT_RD = 350;
+const DEFAULT_VOLATILITY = 0.06;
+
 function rowToFlat(row: {
 	id: number;
 	realtUrl: string;
@@ -27,6 +30,8 @@ function rowToFlat(row: {
 	imageUrl: string | null;
 	scrapeStatus: string;
 	eloRating: number;
+	ratingDeviation: number | null;
+	volatility: number | null;
 	band: string | null;
 	createdAt: Date | number;
 	updatedAt: Date | number | null;
@@ -43,6 +48,8 @@ function rowToFlat(row: {
 		imageUrl: row.imageUrl ?? null,
 		scrapeStatus: row.scrapeStatus as ScrapeStatus,
 		eloRating: row.eloRating,
+		ratingDeviation: row.ratingDeviation ?? DEFAULT_RD,
+		volatility: row.volatility ?? DEFAULT_VOLATILITY,
 		band: row.band,
 		createdAt: toDate(row.createdAt),
 		updatedAt: row.updatedAt != null ? toDate(row.updatedAt) : null,

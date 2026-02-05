@@ -18,6 +18,8 @@ export interface Flat {
 	imageUrl: string | null;
 	scrapeStatus: ScrapeStatus;
 	eloRating: number;
+	ratingDeviation: number;
+	volatility: number;
 	band: string | null;
 	createdAt: Date;
 	updatedAt: Date | null;

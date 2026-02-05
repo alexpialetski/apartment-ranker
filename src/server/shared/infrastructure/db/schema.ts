@@ -29,6 +29,10 @@ export const flats = createTable(
 		imageUrl: d.text({ length: 2048 }),
 		scrapeStatus: d.text({ length: 32 }).notNull().default("pending"),
 		eloRating: d.real().notNull().default(1500),
+		/** Glicko-2 rating deviation (RD). Default 350. */
+		ratingDeviation: d.real().default(350),
+		/** Glicko-2 volatility. Default 0.06. */
+		volatility: d.real().default(0.06),
 		/** Band = room count + price-per-m² range, e.g. "1-room_1800-1900". Used to compare/rank only within same band. */
 		band: d.text(),
 		createdAt: d

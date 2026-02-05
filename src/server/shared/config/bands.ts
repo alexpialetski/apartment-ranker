@@ -20,8 +20,8 @@ export interface BandConfig {
 }
 
 const BAND_STEP = 100;
-const BAND_MIN = 1800;
-const BAND_MAX = 3100;
+const BAND_MIN = 1700;
+const BAND_MAX = 2400;
 
 function buildPriceBands(): PriceBand[] {
 	const bands: PriceBand[] = [];

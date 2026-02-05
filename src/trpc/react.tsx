@@ -45,9 +45,8 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 		api.createClient({
 			links: [
 				loggerLink({
-					enabled: (op) =>
-						process.env.NODE_ENV === "development" ||
-						(op.direction === "down" && op.result instanceof Error),
+					// Disabled: server already logs errors in dev; client logs duplicate and add noise (e.g. addByUrl "already exists")
+					enabled: () => false,
 				}),
 				httpBatchStreamLink({
 					transformer: SuperJSON,

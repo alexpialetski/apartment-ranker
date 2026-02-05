@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 
 import { FlatCard } from "~/app/_components/flat-card";
 import { api } from "~/trpc/react";
 
-export default function FlatsPage() {
+type FlatsPageProps = Readonly<{
+	params?: Promise<Record<string, string | string[]>>;
+	searchParams?: Promise<Record<string, string | string[]>>;
+}>;
+
+const empty = Promise.resolve({} as Record<string, string | string[]>);
+
+export default function FlatsPage({ params, searchParams }: FlatsPageProps) {
+	use(params ?? empty);
+	use(searchParams ?? empty);
 	const [addUrl, setAddUrl] = useState("");
 	const [removeUrl, setRemoveUrl] = useState("");
 
@@ -28,16 +37,16 @@ export default function FlatsPage() {
 	const flats = listFlats.data ?? [];
 
 	return (
-		<main className="min-h-screen bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+		<main className="min-h-screen bg-surface text-text">
 			<div className="container mx-auto max-w-3xl px-4 py-8">
-				<h1 className="mb-8 font-extrabold text-3xl tracking-tight sm:text-4xl">
+				<h1 className="mb-8 font-extrabold text-3xl text-text tracking-tight sm:text-4xl">
 					Add &amp; List
 				</h1>
 
 				{/* Top section: Add by URL, Remove by URL */}
 				<section className="mb-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
 					<div className="flex flex-1 flex-col gap-1">
-						<label className="text-sm text-white/80" htmlFor="add-url">
+						<label className="text-sm text-text-muted" htmlFor="add-url">
 							Add by URL
 						</label>
 						<form
@@ -49,7 +58,7 @@ export default function FlatsPage() {
 							}}
 						>
 							<input
-								className="flex-1 rounded border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+								className="flex-1 rounded border border-border bg-surface-elevated px-3 py-2 text-text placeholder:text-text-subtle focus:outline-none focus:ring-2 focus:ring-accent"
 								disabled={addByUrl.isPending}
 								id="add-url"
 								onChange={(e) => setAddUrl(e.target.value)}
@@ -58,7 +67,7 @@ export default function FlatsPage() {
 								value={addUrl}
 							/>
 							<button
-								className="rounded bg-white/20 px-4 py-2 font-medium hover:bg-white/30 disabled:opacity-50"
+								className="rounded bg-accent px-4 py-2 font-medium text-surface-elevated hover:bg-accent-hover disabled:opacity-50"
 								disabled={addByUrl.isPending || !addUrl.trim()}
 								type="submit"
 							>
@@ -66,12 +75,12 @@ export default function FlatsPage() {
 							</button>
 						</form>
 						{addByUrl.isError && (
-							<p className="text-red-300 text-sm">{addByUrl.error.message}</p>
+							<p className="text-error text-sm">{addByUrl.error.message}</p>
 						)}
 					</div>
 
 					<div className="flex flex-1 flex-col gap-1">
-						<label className="text-sm text-white/80" htmlFor="remove-url">
+						<label className="text-sm text-text-muted" htmlFor="remove-url">
 							Remove by URL
 						</label>
 						<form
@@ -83,7 +92,7 @@ export default function FlatsPage() {
 							}}
 						>
 							<input
-								className="flex-1 rounded border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
+								className="flex-1 rounded border border-border bg-surface-elevated px-3 py-2 text-text placeholder:text-text-subtle focus:outline-none focus:ring-2 focus:ring-accent"
 								disabled={removeByUrl.isPending}
 								id="remove-url"
 								onChange={(e) => setRemoveUrl(e.target.value)}
@@ -92,7 +101,7 @@ export default function FlatsPage() {
 								value={removeUrl}
 							/>
 							<button
-								className="rounded bg-white/20 px-4 py-2 font-medium hover:bg-white/30 disabled:opacity-50"
+								className="rounded bg-accent px-4 py-2 font-medium text-surface-elevated hover:bg-accent-hover disabled:opacity-50"
 								disabled={removeByUrl.isPending || !removeUrl.trim()}
 								type="submit"
 							>
@@ -100,7 +109,7 @@ export default function FlatsPage() {
 							</button>
 						</form>
 						{removeByUrl.isSuccess && !removeByUrl.data?.deleted && (
-							<p className="text-sm text-white/70">
+							<p className="text-sm text-text-subtle">
 								No flat found with that URL
 							</p>
 						)}
@@ -109,10 +118,10 @@ export default function FlatsPage() {
 
 				{/* List */}
 				<section>
-					<h2 className="mb-4 font-semibold text-xl">Flats</h2>
-					{listFlats.isLoading && <p className="text-white/70">Loading…</p>}
+					<h2 className="mb-4 font-semibold text-text text-xl">Flats</h2>
+					{listFlats.isLoading && <p className="text-text-muted">Loading…</p>}
 					{listFlats.isSuccess && flats.length === 0 && (
-						<p className="text-white/70">
+						<p className="text-text-muted">
 							No flats yet. Add one with a Realt.by URL above.
 						</p>
 					)}
