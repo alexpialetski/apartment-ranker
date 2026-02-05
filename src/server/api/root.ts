@@ -1,3 +1,4 @@
+import { flatRouter } from "~/server/api/routers/flat";
 import {
 	createCallerFactory,
 	createTRPCRouter,
@@ -11,6 +12,7 @@ import {
  */
 export const appRouter = createTRPCRouter({
 	health: publicProcedure.query(() => ({ ok: true })),
+	flat: flatRouter,
 });
 
 // export type definition of API

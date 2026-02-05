@@ -8,6 +8,57 @@ Smart comparison and ranking of flats (Realt.by) in Minsk. Add by URL, compare i
 - [UX-REQUIREMENTS.md](./UX-REQUIREMENTS.md) — Screens and UX
 - [TECH-DECISIONS.md](./TECH-DECISIONS.md) — Stack and algorithms
 - [BUSINESS-FLOWS.md](./BUSINESS-FLOWS.md) — Add, remove, compare, rank, scrape
+- [ROADMAP.md](./ROADMAP.md) — Implementation roadmap
+
+---
+
+## How to run locally
+
+1. **Clone and install**
+   ```bash
+   npm install
+   ```
+
+2. **Environment**
+   - Copy `.env.example` to `.env`.
+   - Set `DATABASE_URL` (default `file:./db.sqlite` is fine).
+   - Set `REDIS_URL` (e.g. `redis://localhost:6379`). The app needs Redis for the scrape queue (BullMQ).
+
+3. **Redis**
+   - Start Redis on the host/port you used in `REDIS_URL`. For example:
+     ```bash
+     docker run -d -p 6379:6379 redis
+     ```
+   - Or install and run Redis locally (e.g. `redis-server`).
+
+4. **Database**
+   ```bash
+   npm run db:migrate
+   ```
+   (Or `npm run db:push` to sync schema without migration files.)
+
+5. **Dev server**
+   ```bash
+   npm run dev
+   ```
+   - App: [http://localhost:3000](http://localhost:3000).
+   - The BullMQ worker runs in the same process (started via `instrumentation.ts`). Add a Realt.by listing URL on the Add & List screen to enqueue a scrape job and see cards update when the worker finishes.
+
+**Troubleshooting: flat stuck on “Scraping…”**
+
+- In the terminal where `npm run dev` is running you should see:
+  - `[apartment-ranker] Scrape worker started (listening for jobs)` when the server starts.
+  - `[scrape-flats] Processing job for flatId: <id>` when a job is picked up.
+  - `[scrape-flats] Done for flatId <id> success|error` when the scrape finishes.
+- If you never see “Scrape worker started”, the worker did not start (e.g. instrumentation not running or Redis connection failed on startup). Check that `REDIS_URL` in `.env` is correct and Redis is reachable.
+- If you see “Processing job” but never “Done”, the scraper may be timing out (e.g. Realt.by slow or blocking). After ~25s the job should fail and the card will show “Couldn’t load” with a Reload button. Check the terminal for `[scrape-flats] Scraper threw...` or `Scrape failed for flat`.
+- If the worker never logs “Processing job”, jobs are not being consumed (same Redis? wrong queue?). Restart the dev server and try adding a flat again.
+
+**Other commands**
+
+- `npm run build` — Production build (requires `REDIS_URL` in env).
+- `npm run db:studio` — Open Drizzle Studio to inspect the SQLite DB.
+- `npm run typecheck` / `npm run check` — Type-check and lint.
 
 ---
 

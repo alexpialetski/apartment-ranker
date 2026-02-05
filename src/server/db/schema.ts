@@ -29,6 +29,7 @@ export const flats = createTable(
 		imageUrl: d.text(),
 		scrapeStatus: d.text({ length: 32 }).notNull().default("pending"),
 		eloRating: d.real().notNull().default(1500),
+		/** Band = room count + price-per-m² range, e.g. "1-room_1800-1900". Used to compare/rank only within same band. */
 		band: d.text(),
 		createdAt: d
 			.integer({ mode: "timestamp" })

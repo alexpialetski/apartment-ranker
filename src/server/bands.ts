@@ -1,11 +1,12 @@
 /**
  * Band definition for ranking: (room_count, price_per_sqm range).
  * Flats are compared and ranked only within the same band.
- * Prices in BYN per m² (Minsk, Realt.by).
+ * Prices in USD per m² (from Realt.by priceRatesPerM2["840"]).
+ * Bands are 100 USD/m² steps (e.g. 1800-1900, 1900-2000, 2000-2100).
  */
 
 export interface PriceBand {
-	/** Label segment for price range, e.g. "1.5-1.8k" */
+	/** Label segment for price range, e.g. "1800-1900" */
 	label: string;
 	minPricePerSqm: number;
 	maxPricePerSqm: number;
@@ -18,14 +19,26 @@ export interface BandConfig {
 	priceBands: PriceBand[];
 }
 
+const BAND_STEP = 100;
+const BAND_MIN = 1800;
+const BAND_MAX = 3100;
+
+function buildPriceBands(): PriceBand[] {
+	const bands: PriceBand[] = [];
+	for (let min = BAND_MIN; min < BAND_MAX; min += BAND_STEP) {
+		const max = min + BAND_STEP;
+		bands.push({
+			label: `${min}-${max}`,
+			minPricePerSqm: min,
+			maxPricePerSqm: max,
+		});
+	}
+	return bands;
+}
+
 const DEFAULT_BAND_CONFIG: BandConfig = {
 	roomCounts: [1, 2, 3],
-	priceBands: [
-		{ label: "1.5-1.8k", minPricePerSqm: 1500, maxPricePerSqm: 1800 },
-		{ label: "1.8-2k", minPricePerSqm: 1800, maxPricePerSqm: 2000 },
-		{ label: "2-2.2k", minPricePerSqm: 2000, maxPricePerSqm: 2200 },
-		{ label: "2.2-2.5k", minPricePerSqm: 2200, maxPricePerSqm: 2500 },
-	],
+	priceBands: buildPriceBands(),
 };
 
 /** Band config used by getBandLabel. Can be overridden for tests. */
@@ -42,8 +55,9 @@ export function setBandConfig(config: BandConfig): void {
 /**
  * Returns a stable band identifier for a flat, or null if it doesn't fall in any band.
  * Used when saving a scraped flat and for grouping in Compare/Rank.
+ * Band is stored in the DB as a string like "1-room_1800-1900".
  *
- * @example getBandLabel(1, 1700) => "1-room_1.5-1.8k"
+ * @example getBandLabel(1, 1850) => "1-room_1800-1900"
  */
 export function getBandLabel(
 	rooms: number,
