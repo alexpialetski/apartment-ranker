@@ -5,7 +5,7 @@ import { getBandLabel } from "~/server/bands";
 import { db } from "~/server/db";
 import { flats } from "~/server/db/schema";
 import { getQueueConnection, QUEUE_NAME } from "~/server/queue";
-import { scrapeRealtListing } from "~/server/scraper/realt";
+import { scrapeRealtListing, type ScrapeResult } from "~/server/scraper/realt";
 import { publishScrapeEvent } from "~/server/sse/scrape-events";
 
 export type ScrapeJobPayload = { flatId: number };
@@ -29,7 +29,7 @@ async function processScrapeJob(payload: ScrapeJobPayload): Promise<void> {
 
 	const SCRAPE_TIMEOUT_MS = 25_000;
 
-	let result;
+	let result: ScrapeResult;
 	try {
 		result = await Promise.race([
 			scrapeRealtListing(flat.realtUrl),

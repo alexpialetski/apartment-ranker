@@ -1,0 +1,1 @@
+ALTER TABLE `apartment-ranker_flat` DROP COLUMN `imageUrl`;
