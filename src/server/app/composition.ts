@@ -1,3 +1,4 @@
+import type { LibSQLDatabase } from "drizzle-orm/libsql";
 import { createComparisonRepository } from "~/server/comparison/adapter/drizzle-comparison.repository";
 import type { ComparisonPair } from "~/server/comparison/use-cases/get-comparison-pair";
 import * as getComparisonPairUC from "~/server/comparison/use-cases/get-comparison-pair";
@@ -17,11 +18,18 @@ import { createScrapeEventPublisher } from "~/server/scraping/adapter/sse-scrape
 import * as processScrapeJobUC from "~/server/scraping/use-cases/process-scrape-job";
 import { getBandConfig } from "~/server/shared/config/bands";
 import { db } from "~/server/shared/infrastructure/db";
+import type * as schema from "~/server/shared/infrastructure/db/schema";
 import {
 	getAllBandLabels as getAllBandLabelsDomain,
 	getBandLabel as getBandLabelDomain,
 } from "~/server/shared/lib/band.service";
+import type { IScrapeJobQueue } from "~/server/shared/port/scrape-job.queue";
 import { normalizeRealtUrl } from "~/server/shared/utils/normalize-realt-url";
+
+export interface BuildUseCasesDeps {
+	db?: LibSQLDatabase<typeof schema>;
+	scrapeQueue?: IScrapeJobQueue;
+}
 
 let useCases: UseCasesContainer | null = null;
 
@@ -45,10 +53,11 @@ export interface UseCasesContainer {
 	getBands: () => string[];
 }
 
-function buildUseCases(): UseCasesContainer {
-	const flatRepo = createFlatRepository(db);
-	const comparisonRepo = createComparisonRepository(db);
-	const scrapeQueue = createScrapeJobQueue();
+export function buildUseCases(deps?: BuildUseCasesDeps): UseCasesContainer {
+	const database = deps?.db ?? db;
+	const flatRepo = createFlatRepository(database);
+	const comparisonRepo = createComparisonRepository(database);
+	const scrapeQueue = deps?.scrapeQueue ?? createScrapeJobQueue();
 	const scraper = createRealtScraperAdapter();
 	const eventPublisher = createScrapeEventPublisher();
 	const bandConfig = getBandConfig();
@@ -91,7 +100,7 @@ function buildUseCases(): UseCasesContainer {
 
 export function getUseCases(): UseCasesContainer {
 	if (!useCases) {
-		useCases = buildUseCases();
+		useCases = buildUseCases(undefined);
 	}
 	return useCases;
 }
