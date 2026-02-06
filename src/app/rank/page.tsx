@@ -45,7 +45,7 @@ export default function RankPage({ params, searchParams }: RankPageProps) {
 												{index + 1}
 											</span>
 											<div className="flex-1">
-												<FlatCard flat={flat} />
+												<FlatCard flat={flat} showRemoveButton />
 											</div>
 										</li>
 									))}

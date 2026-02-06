@@ -1,0 +1,85 @@
+---
+description: Clean Architecture principles and dependency rules
+alwaysApply: true
+---
+
+# Clean Architecture Rules
+
+This project follows Clean Architecture with feature-sliced design. Follow these rules strictly.
+
+## Dependency Rule
+
+**Dependencies point inward.** The center (domain, use cases, ports) must NOT depend on outer layers (adapters, infrastructure, frameworks).
+
+### Domain Layer (`domain/`)
+- Contains only TypeScript types, constants, and pure functions
+- **NEVER** import from: Drizzle, Redis, `fetch`, Next.js, BullMQ, or any infrastructure
+- **NEVER** import from adapters or infrastructure directories
+- Example: `src/server/flat/domain/flat.ts` defines `Flat` interface and `ScrapeStatus` type
+
+### Port Layer (`port/`)
+- TypeScript interfaces that describe *what* the application needs
+- Named with `I` prefix for repositories/services (e.g. `IFlatRepository`, `IScrapeJobQueue`)
+- **NEVER** import from adapters or infrastructure
+- Use cases and domain may import ports
+
+### Use Case Layer (`use-cases/`)
+- Plain async functions: `(deps, input) => Promise<output>`
+- Dependencies passed via `deps` parameter (never imported)
+- **NEVER** import adapters or infrastructure directly
+- **ONLY** import: domain types, ports, and shared types/functions
+- Throw domain-level errors (e.g. `AlreadyExistsError`)
+
+```typescript
+// ✅ GOOD
+export async function addFlatByUrl(
+  deps: AddFlatByUrlDeps,
+  input: { realtUrl: string },
+): Promise<Flat> {
+  // Uses deps.flatRepo (port), not direct DB access
+}
+
+// ❌ BAD
+import { db } from "~/server/shared/infrastructure/db";
+export async function addFlatByUrl(input: { realtUrl: string }) {
+  await db.insert(flats).values(...); // Direct infrastructure access
+}
+```
+
+### Adapter Layer (`adapter/`)
+- Implements port interfaces
+- **CAN** import infrastructure (DB, queue, HTTP)
+- Maps infrastructure types to domain types
+- Exported as factories: `createFlatRepository(db)`
+
+### Composition Root (`server/app/composition.ts`)
+- **ONLY** place that instantiates adapters
+- Wires adapters into use cases
+- Returns use case container bound to dependencies
+
+## Feature Slices
+
+Code is organized by feature (flat, comparison, ranking, scraping), not by technical layer.
+
+### Slice Dependencies
+- `shared` does NOT depend on any slice
+- `flat` depends only on `shared`
+- `comparison` and `ranking` depend on `flat` (via port) and `shared`
+- `scraping` depends on `flat` (via port) and `shared`
+- `app` and `api` depend on all slices and shared
+
+### Slice Structure
+Each slice follows this structure:
+```
+feature-name/
+  domain/          # Entities, types, pure functions
+  port/            # Interfaces (IFeatureRepository)
+  use-cases/       # Business logic functions
+  adapter/         # Infrastructure implementations
+```
+
+## Testing
+
+- Use cases depend only on ports, so tests can pass mocks/fakes
+- Never test adapters through use cases—test adapters separately
+- Integration tests wire real adapters via composition root

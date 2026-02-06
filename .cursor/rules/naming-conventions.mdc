@@ -1,0 +1,98 @@
+---
+description: File and naming conventions
+alwaysApply: true
+---
+
+# Naming Conventions
+
+## File Naming
+
+- Use kebab-case for all file names: `add-flat-by-url.ts`, `flat-card.tsx`
+- Use descriptive names that indicate purpose: `drizzle-flat.repository.ts`, `realt-scraper.adapter.ts`
+- Match file name to primary export when possible
+
+### Directory Structure
+- `domain/` - Domain entities and types
+- `port/` - Port interfaces
+- `use-cases/` - Use case functions (kebab-case files)
+- `adapter/` - Adapter implementations (kebab-case files)
+- `_components/` - Shared React components (Next.js convention)
+
+## TypeScript Naming
+
+### Interfaces
+- Port interfaces: `IFlatRepository`, `IScrapeJobQueue` (prefix with `I`)
+- Domain interfaces: `Flat`, `Comparison` (no prefix, PascalCase)
+- Dependencies interfaces: `AddFlatByUrlDeps`, `ProcessScrapeJobDeps` (suffix with `Deps`)
+
+### Classes
+- Error classes: `AlreadyExistsError`, `NotFoundError` (suffix with `Error`, PascalCase)
+- Domain classes: PascalCase
+
+### Functions
+- Use cases: `addFlatByUrl`, `getFlat`, `listFlats` (camelCase, verb-first)
+- Pure functions: `normalizeRealtUrl`, `getBandLabel` (camelCase)
+- Factory functions: `createFlatRepository`, `createScrapeJobQueue` (prefix with `create`)
+
+### Variables
+- camelCase for variables and constants
+- Use descriptive names: `existingActive`, `normalized`, `flatRepo`
+- Boolean variables: `isScraping`, `isError`, `isSuccess` (prefix with `is`)
+
+### Types
+- Domain types: `Flat`, `ScrapeStatus`, `ComparisonPair` (PascalCase)
+- Union types: `"pending" | "scraping" | "success" | "error"` (lowercase literals)
+- Utility types: `RouterOutputs`, `UseCasesContainer` (PascalCase)
+
+## React Naming
+
+### Components
+- Component names: PascalCase: `FlatCard`, `Nav`, `ScrapeSseProvider`
+- Props: camelCase: `showRemoveButton`, `flat`
+- Event handlers: `onClick`, `onSuccess`, `onMutate` (prefix with `on`)
+
+### Hooks
+- Custom hooks: `useScrapeSse` (prefix with `use`, camelCase)
+- Hook files: `use-scrape-sse.ts` (kebab-case)
+
+## Database/ORM
+
+- Table names: plural, snake_case: `flats`, `comparisons`
+- Column names: snake_case: `realt_url`, `price_per_sqm`, `created_at`
+- Schema exports: camelCase mapped from snake_case
+
+## Constants
+
+- Domain constants: PascalCase: `ScrapeStatus`
+- Config constants: camelCase: `bandConfig`, `getBandConfig()`
+
+## Examples
+
+```typescript
+// ✅ GOOD - File: add-flat-by-url.ts
+export interface AddFlatByUrlDeps {
+  flatRepo: IFlatRepository;
+  scrapeQueue: IScrapeJobQueue;
+}
+
+export async function addFlatByUrl(
+  deps: AddFlatByUrlDeps,
+  input: { realtUrl: string },
+): Promise<Flat> {
+  const normalized = deps.normalizeUrl(input.realtUrl);
+  const existingActive = await deps.flatRepo.findByRealtUrl(normalized);
+  // ...
+}
+
+// ✅ GOOD - File: flat-card.tsx
+export function FlatCard({
+  flat,
+  showRemoveButton = false,
+}: {
+  flat: Flat;
+  showRemoveButton?: boolean;
+}) {
+  const isScraping = flat.scrapeStatus === "scraping";
+  // ...
+}
+```

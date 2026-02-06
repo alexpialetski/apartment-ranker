@@ -7,7 +7,13 @@ import { api } from "~/trpc/react";
 
 type Flat = RouterOutputs["flat"]["listFlats"][number];
 
-export function FlatCard({ flat }: { flat: Flat }) {
+export function FlatCard({
+	flat,
+	showRemoveButton = false,
+}: {
+	flat: Flat;
+	showRemoveButton?: boolean;
+}) {
 	const utils = api.useUtils();
 	const reloadFlat = api.flat.reloadFlat.useMutation({
 		onMutate: async ({ id }) => {
@@ -32,6 +38,13 @@ export function FlatCard({ flat }: { flat: Flat }) {
 		},
 		onSuccess: () => {
 			void utils.flat.listFlats.invalidate();
+		},
+	});
+
+	const removeFlat = api.flat.removeByUrl.useMutation({
+		onSuccess: () => {
+			void utils.flat.listFlats.invalidate();
+			void utils.rank.getRankedFlats.invalidate();
 		},
 	});
 
@@ -110,6 +123,17 @@ export function FlatCard({ flat }: { flat: Flat }) {
 						>
 							{reloadFlat.isPending ? "Reloading…" : "Reload"}
 						</button>
+						{showRemoveButton && (
+							<button
+								aria-label="Remove flat"
+								className="rounded border border-red-500/50 px-3 py-1.5 text-red-500 text-sm hover:bg-red-500/10 disabled:opacity-50"
+								disabled={removeFlat.isPending}
+								onClick={() => removeFlat.mutate({ realtUrl: flat.realtUrl })}
+								type="button"
+							>
+								{removeFlat.isPending ? "Removing…" : "Remove"}
+							</button>
+						)}
 					</div>
 				</>
 			)}

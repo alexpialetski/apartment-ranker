@@ -1,0 +1,125 @@
+---
+description: React component patterns and conventions
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# React Component Conventions
+
+## Component Structure
+
+- Use functional components only
+- Use `"use client"` directive for client components
+- Place component in `src/app/_components/` for shared components
+- Use PascalCase for component names
+
+## TypeScript Types
+
+- Extract tRPC output types: `type Flat = RouterOutputs["flat"]["listFlats"][number]`
+- Use explicit prop types with interfaces or inline object types
+- Prefer `type` for prop types when not extending
+
+```typescript
+// ✅ GOOD
+type Flat = RouterOutputs["flat"]["listFlats"][number];
+
+export function FlatCard({
+  flat,
+  showRemoveButton = false,
+}: {
+  flat: Flat;
+  showRemoveButton?: boolean;
+}) {
+  // Component implementation
+}
+```
+
+## tRPC Hooks
+
+- Use `api.useUtils()` for cache invalidation
+- Use mutations with `onSuccess` and `onMutate` for optimistic updates
+- Invalidate related queries in `onSuccess`
+
+```typescript
+// ✅ GOOD
+const utils = api.useUtils();
+const reloadFlat = api.flat.reloadFlat.useMutation({
+  onMutate: async ({ id }) => {
+    await utils.flat.listFlats.cancel();
+    utils.flat.listFlats.setData(undefined, (prev) => {
+      // Optimistic update
+    });
+  },
+  onSuccess: () => {
+    void utils.flat.listFlats.invalidate();
+  },
+});
+```
+
+## Accessibility
+
+- Always include `aria-label` for icon-only buttons
+- Use `aria-busy` for loading states
+- Use `aria-live` for dynamic content updates
+- Include `type="button"` for buttons that aren't form submissions
+
+```typescript
+// ✅ GOOD
+<button
+  aria-label={isPending ? "Reloading flat data" : "Reload flat data"}
+  type="button"
+  disabled={isPending}
+>
+  {isPending ? "Reloading…" : "Reload"}
+</button>
+```
+
+## Styling
+
+- Use Tailwind CSS classes
+- Follow Biome's `useSortedClasses` rule for class ordering
+- Use semantic class names: `text-text`, `text-text-muted`, `bg-surface-elevated`
+- Group related styles logically
+
+## Image Components
+
+- Use Next.js `Image` component for images
+- Always include `alt` attribute (empty string `""` for decorative images)
+- Use `fill` with `sizes` for responsive images
+- Set `unoptimized` when needed (e.g., external images)
+
+```typescript
+// ✅ GOOD
+<Image
+  alt=""
+  className="object-cover"
+  fill
+  sizes="128px"
+  src={flat.imageUrl}
+  unoptimized
+/>
+```
+
+## Conditional Rendering
+
+- Use early returns or ternary operators for conditional rendering
+- Extract complex conditions to variables: `const isScraping = flat.scrapeStatus === "scraping"`
+- Use fragments (`<>...</>`) when multiple elements need conditional rendering
+
+## External Links
+
+- Always include `rel="noopener noreferrer"` for external links
+- Use `target="_blank"` for external links
+- Include descriptive `aria-label` for external links
+
+```typescript
+// ✅ GOOD
+<a
+  aria-label="Open listing on Realt"
+  href={flat.realtUrl}
+  rel="noopener noreferrer"
+  target="_blank"
+>
+  Open on Realt
+</a>
+```

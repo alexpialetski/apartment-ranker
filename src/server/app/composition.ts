@@ -73,7 +73,7 @@ export function buildUseCases(deps?: BuildUseCasesDeps): UseCasesContainer {
 			),
 		removeFlatByUrl: (input) =>
 			removeFlatByUrlUC.removeFlatByUrl(
-				{ flatRepo, normalizeUrl: normalizeRealtUrl },
+				{ flatRepo, comparisonRepo, normalizeUrl: normalizeRealtUrl },
 				input,
 			),
 		listFlats: () => listFlatsUC.listFlats({ flatRepo }),

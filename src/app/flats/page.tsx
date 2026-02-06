@@ -129,7 +129,7 @@ export default function FlatsPage({ params, searchParams }: FlatsPageProps) {
 						<ul className="flex flex-col gap-3">
 							{flats.map((flat) => (
 								<li key={flat.id}>
-									<FlatCard flat={flat} />
+									<FlatCard flat={flat} showRemoveButton />
 								</li>
 							))}
 						</ul>

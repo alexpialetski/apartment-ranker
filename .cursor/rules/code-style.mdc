@@ -1,0 +1,114 @@
+---
+description: Code formatting and style guidelines
+alwaysApply: true
+---
+
+# Code Style Guidelines
+
+## Formatting
+
+- Use Biome for formatting and linting (configured in `biome.jsonc`)
+- Run `npm run check:write` before committing
+- Biome handles: import organization, class sorting, formatting
+
+## Import Organization
+
+- Biome automatically organizes imports
+- Group imports: external packages → internal (`~/`)
+- Use `type` imports for types: `import type { Flat } from "~/server/flat/domain/flat"`
+- Prefer `import type` when importing only types
+
+```typescript
+// ✅ GOOD - Biome will organize these
+import type { LibSQLDatabase } from "drizzle-orm/libsql";
+import { createFlatRepository } from "~/server/flat/adapter/drizzle-flat.repository";
+import type { Flat } from "~/server/flat/domain/flat";
+import * as addFlatByUrlUC from "~/server/flat/use-cases/add-flat-by-url";
+```
+
+## Indentation and Spacing
+
+- Use tabs for indentation (as configured in Biome)
+- Use 2-space indentation in JSON/JSONC files
+- No trailing whitespace
+- Single blank line between logical sections
+
+## Function Formatting
+
+- Keep functions focused and small
+- Use early returns for guard clauses
+- Extract complex logic to helper functions
+- Use descriptive variable names
+
+```typescript
+// ✅ GOOD
+export async function addFlatByUrl(
+  deps: AddFlatByUrlDeps,
+  input: { realtUrl: string },
+): Promise<Flat> {
+  const normalized = deps.normalizeUrl(input.realtUrl);
+  const existingActive = await deps.flatRepo.findByRealtUrl(normalized);
+  
+  if (existingActive) {
+    throw new AlreadyExistsError("A flat with this URL already exists");
+  }
+  
+  // Rest of implementation
+}
+```
+
+## Error Handling
+
+- Throw errors early with guard clauses
+- Use specific error types, not generic `Error`
+- Let errors propagate unless you need to transform them
+
+## Comments
+
+- Prefer self-documenting code over comments
+- Use comments to explain "why", not "what"
+- Remove commented-out code before committing
+- Use JSDoc for public APIs if needed
+
+## Async Patterns
+
+- Always use `async/await`, not `.then()/.catch()`
+- Use `void` prefix when intentionally ignoring promise: `void utils.flat.listFlats.invalidate()`
+- Handle errors appropriately (try/catch or propagate)
+
+```typescript
+// ✅ GOOD
+onSuccess: () => {
+  void utils.flat.listFlats.invalidate();
+}
+
+// ✅ GOOD
+try {
+  await someAsyncOperation();
+} catch (error) {
+  logger.error("Operation failed", { error });
+  throw error;
+}
+```
+
+## Type Assertions
+
+- Avoid `as` type assertions when possible
+- Prefer type guards or proper typing
+- Use `as const` for literal types: `scrapeStatus: "scraping" as const`
+
+## Null Checks
+
+- Use `!= null` to check for both `null` and `undefined`
+- Use nullish coalescing: `value ?? defaultValue`
+- Use optional chaining: `obj?.property`
+
+```typescript
+// ✅ GOOD
+if (existingAny && existingAny.deletedAt != null) {
+  // Handle deleted
+}
+
+const price = flat.price ?? 0;
+const location = flat.location?.toLowerCase();
+```

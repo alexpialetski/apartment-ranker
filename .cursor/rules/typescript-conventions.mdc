@@ -1,0 +1,100 @@
+---
+description: TypeScript coding standards and conventions
+globs: **/*.ts
+alwaysApply: false
+---
+
+# TypeScript Conventions
+
+## Type Safety
+
+- Use `strict: true` TypeScript settings (already configured)
+- Use `noUncheckedIndexedAccess: true` (already configured)
+- Prefer explicit types over `any` or implicit `any`
+- Use `type` for type aliases, `interface` for object shapes that may be extended
+
+## Error Handling
+
+- Create domain-specific error classes extending `Error`
+- Name errors descriptively: `AlreadyExistsError`, `NotFoundError`
+- Include error name in constructor: `this.name = "AlreadyExistsError"`
+
+```typescript
+// ✅ GOOD
+export class AlreadyExistsError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "AlreadyExistsError";
+  }
+}
+
+// ❌ BAD
+throw new Error("Already exists"); // Generic error
+```
+
+## Use Case Functions
+
+- Signature: `(deps: DepsInterface, input: InputType) => Promise<OutputType>`
+- Dependencies passed as first parameter object
+- Input as second parameter object
+- Return domain types, not infrastructure types
+
+```typescript
+// ✅ GOOD
+export interface AddFlatByUrlDeps {
+  flatRepo: IFlatRepository;
+  scrapeQueue: IScrapeJobQueue;
+  normalizeUrl: (url: string) => string;
+}
+
+export async function addFlatByUrl(
+  deps: AddFlatByUrlDeps,
+  input: { realtUrl: string },
+): Promise<Flat> {
+  // Implementation
+}
+```
+
+## Port Interfaces
+
+- Prefix with `I` for repositories/services: `IFlatRepository`, `IScrapeJobQueue`
+- Use descriptive method names: `findByRealtUrl`, `listAll`, `create`
+- Return domain types or `Promise<domain types>`
+- Keep interfaces focused—one responsibility
+
+## Adapter Factories
+
+- Export factory functions: `createFlatRepository(db)`
+- Accept infrastructure dependencies as parameters
+- Return objects implementing port interfaces
+
+```typescript
+// ✅ GOOD
+export function createFlatRepository(
+  db: LibSQLDatabase<typeof schema>,
+): IFlatRepository {
+  return {
+    findByRealtUrl: async (url) => {
+      // Implementation using db
+    },
+  };
+}
+```
+
+## Path Aliases
+
+- Use `~/` prefix for imports from `src/`
+- Example: `import type { Flat } from "~/server/flat/domain/flat"`
+- Never use relative paths like `../../../`
+
+## Null Handling
+
+- Use `null` for optional values (not `undefined`)
+- Check for `null` explicitly: `if (value != null)` or `value ?? defaultValue`
+- Domain types use `| null` for optional fields
+
+## Async/Await
+
+- Always use `async/await` instead of raw Promises
+- Handle errors with try/catch or let them propagate to caller
+- Use `Promise<void>` for fire-and-forget operations
