@@ -87,7 +87,7 @@ export function buildUseCases(deps?: BuildUseCasesDeps): UseCasesContainer {
 			),
 		getComparisonPair: (input) =>
 			getComparisonPairUC.getComparisonPair(
-				{ flatRepo, getAllBandLabels },
+				{ flatRepo, comparisonRepo, getAllBandLabels },
 				input,
 			),
 		submitComparison: (input) =>

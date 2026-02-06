@@ -5,6 +5,8 @@
 import "./src/env.js";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+	serverExternalPackages: ["pino", "pino-pretty", "thread-stream"],
+};
 
 export default config;

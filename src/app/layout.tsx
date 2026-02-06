@@ -10,7 +10,6 @@ import { TRPCReactProvider } from "~/trpc/react";
 export const metadata: Metadata = {
 	title: "Apartment Ranker",
 	description: "Smart comparison and ranking of flats (Realt.by) in Minsk",
-	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
 const geist = Geist({

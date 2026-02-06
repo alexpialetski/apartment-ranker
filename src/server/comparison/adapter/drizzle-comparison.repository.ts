@@ -56,5 +56,28 @@ export function createComparisonRepository(
 				);
 			return rows;
 		},
+
+		async getComparedPairKeys(flatIds: number[]) {
+			if (flatIds.length === 0) return new Set<string>();
+			const rows = await db
+				.select({
+					winnerId: comparisons.winnerId,
+					loserId: comparisons.loserId,
+				})
+				.from(comparisons)
+				.where(
+					or(
+						inArray(comparisons.winnerId, flatIds),
+						inArray(comparisons.loserId, flatIds),
+					),
+				);
+			const keys = new Set<string>();
+			for (const row of rows) {
+				const min = Math.min(row.winnerId, row.loserId);
+				const max = Math.max(row.winnerId, row.loserId);
+				keys.add(`${min}-${max}`);
+			}
+			return keys;
+		},
 	};
 }

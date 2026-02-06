@@ -21,9 +21,16 @@ export default function ComparePage({
 	const [band, setBand] = useState<string>("");
 
 	const bandsQuery = api.comparison.getBands.useQuery();
-	const pairQuery = api.comparison.getComparisonPair.useQuery({
-		band: band || undefined,
-	});
+	const pairQuery = api.comparison.getComparisonPair.useQuery(
+		{
+			band: band || undefined,
+		},
+		{
+			refetchOnWindowFocus: false,
+			refetchOnMount: false,
+			refetchOnReconnect: false,
+		},
+	);
 	const submitComparison = api.comparison.submitComparison.useMutation({
 		onSuccess: () => {
 			void pairQuery.refetch();
@@ -34,6 +41,11 @@ export default function ComparePage({
 	const bands = bandsQuery.data ?? [];
 	const isLoading = pairQuery.isLoading || pairQuery.isFetching;
 	const hasPair = pair?.left && pair.right;
+	const allPairsCompared =
+		!isLoading &&
+		pairQuery.isSuccess &&
+		pairQuery.data === null &&
+		bands.length > 0;
 
 	const handleChoice = useCallback(
 		(winnerId: number, loserId: number) => {
@@ -41,6 +53,28 @@ export default function ComparePage({
 		},
 		[submitComparison],
 	);
+
+	function openBothSideBySide() {
+		if (!pair?.left || !pair.right) return;
+		const availW = window.screen?.availWidth ?? 1024;
+		const availH = window.screen?.availHeight ?? 768;
+		const gap = 16;
+		const halfW = Math.floor(availW / 2);
+		const leftWidth = halfW - gap;
+		const rightLeft = halfW + gap;
+		const rightWidth = availW - rightLeft;
+		const features = "scrollbars=yes,resizable=yes";
+		window.open(
+			pair.left.realtUrl,
+			`realt-flat-${pair.left.id}`,
+			`width=${leftWidth},height=${availH},left=0,top=0,${features}`,
+		);
+		window.open(
+			pair.right.realtUrl,
+			`realt-flat-${pair.right.id}`,
+			`width=${rightWidth},height=${availH},left=${rightLeft},top=0,${features}`,
+		);
+	}
 
 	return (
 		<main className="min-h-screen bg-surface text-text">
@@ -80,9 +114,11 @@ export default function ComparePage({
 
 				{!isLoading && !hasPair && (
 					<p className="text-text-muted">
-						Need at least 2 successfully scraped flats
-						{band ? " in this band" : ""}. Add flats and ensure they’re in the
-						same room/price band.
+						{allPairsCompared && band
+							? `All pairs in band "${band}" have been compared. Change the band filter or add more flats to compare.`
+							: allPairsCompared
+								? "All pairs have been compared. Add more flats or change the band filter to continue."
+								: `Need at least 2 successfully scraped flats${band ? ` in band "${band}"` : ""}. Add flats and ensure they're in the same room/price band.`}
 					</p>
 				)}
 
@@ -114,7 +150,15 @@ export default function ComparePage({
 								{submitComparison.isPending ? "Submitting…" : "Right is better"}
 							</button>
 						</div>
-						<div className="flex flex-col justify-end">
+						<div className="flex flex-col justify-end gap-2">
+							<button
+								aria-label="Open both listings side-by-side in half-screen windows"
+								className="rounded border border-border px-4 py-2 text-sm text-text-muted hover:bg-border/50 hover:text-text"
+								onClick={openBothSideBySide}
+								type="button"
+							>
+								Open both side-by-side
+							</button>
 							<button
 								aria-label="Skip this pair and show another"
 								className="rounded border border-border px-4 py-2 text-sm text-text-muted hover:bg-border/50 hover:text-text"
