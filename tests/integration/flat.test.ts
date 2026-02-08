@@ -203,3 +203,45 @@ test("reloadFlat not found throws NOT_FOUND", async () => {
 		expect((err as TRPCError).code).toBe("NOT_FOUND");
 	}
 });
+
+test("reloadAllFlats returns queued 0 when no flats", async () => {
+	const result = await caller.flat.reloadAllFlats();
+	expect(result).toEqual({ queued: 0 });
+});
+
+test("reloadAllFlats queues all flats and sets scrapeStatus to scraping", async () => {
+	const a = await seedSuccessFlat("https://realt.by/sale/flats/1/");
+	const b = await seedSuccessFlat("https://realt.by/sale/flats/2/");
+
+	const result = await caller.flat.reloadAllFlats();
+	expect(result).toEqual({ queued: 2 });
+
+	const list = await caller.flat.listFlats();
+	expect(list).toHaveLength(2);
+	expect(list.map((f) => f.scrapeStatus)).toEqual(["scraping", "scraping"]);
+	expect(list.find((f) => f.id === a.id)?.scrapeStatus).toBe("scraping");
+	expect(list.find((f) => f.id === b.id)?.scrapeStatus).toBe("scraping");
+});
+
+test("listFlats and getFlat return listedAt when set", async () => {
+	const flat = await seedSuccessFlat("https://realt.by/sale/flats/listed/");
+	const listedDate = new Date("2025-09-28T22:41:31.000Z");
+	await flatRepo.update(flat.id, { listedAt: listedDate });
+
+	const list = await caller.flat.listFlats();
+	expect(list).toHaveLength(1);
+	expect(list[0]?.listedAt).toBeDefined();
+	expect(list[0]?.listedAt).toBeInstanceOf(Date);
+	expect((list[0]?.listedAt as Date).getTime()).toBe(listedDate.getTime());
+
+	const found = await caller.flat.getFlat({ id: flat.id });
+	expect(found?.listedAt).toBeInstanceOf(Date);
+	expect((found?.listedAt as Date).getTime()).toBe(listedDate.getTime());
+});
+
+test("listFlats returns listedAt null when not set", async () => {
+	await seedSuccessFlat("https://realt.by/sale/flats/no-listed/");
+	const list = await caller.flat.listFlats();
+	expect(list).toHaveLength(1);
+	expect(list[0]?.listedAt).toBeNull();
+});

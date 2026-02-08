@@ -36,6 +36,13 @@
 			"when": 1770317916144,
 			"tag": "0004_gifted_tombstone",
 			"breakpoints": true
+		},
+		{
+			"idx": 5,
+			"version": "6",
+			"when": 1770541170298,
+			"tag": "0005_chief_junta",
+			"breakpoints": true
 		}
 	]
 }

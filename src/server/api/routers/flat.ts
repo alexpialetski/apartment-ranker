@@ -52,4 +52,8 @@ export const flatRouter = createTRPCRouter({
 				throw err;
 			}
 		}),
+
+	reloadAllFlats: publicProcedure.mutation(async ({ ctx }) => {
+		return ctx.useCases.reloadAllFlats();
+	}),
 });

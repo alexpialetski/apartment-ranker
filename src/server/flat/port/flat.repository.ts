@@ -13,6 +13,7 @@ export interface FlatUpdate {
 	ratingDeviation?: number;
 	volatility?: number;
 	band?: string | null;
+	listedAt?: Date | null;
 	deletedAt?: Date | null;
 }
 

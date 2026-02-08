@@ -15,6 +15,8 @@ interface NextDataObject {
 	rooms?: number;
 	address?: string;
 	areaTotal?: number;
+	/** ISO date when listing was created (date when flat was listed for sale). */
+	createdAt?: string;
 	townDistrictName?: string;
 	townSubDistrictName?: string;
 	/** First photo URL for card thumbnail. Realt.by may use photos array or single image field. */
@@ -106,6 +108,17 @@ export async function scrapeRealtListing(url: string): Promise<ScrapeResult> {
 			? obj.imageUrl.trim()
 			: (obj.photos?.[0]?.url ?? obj.photos?.[0]?.imageUrl ?? obj.photo?.url);
 
+	// Listed date: Realt.by createdAt (valid ISO string only)
+	const listedAt =
+		typeof obj.createdAt === "string" && obj.createdAt.trim()
+			? (() => {
+					const d = new Date(obj.createdAt);
+					return Number.isFinite(d.getTime())
+						? obj.createdAt.trim()
+						: undefined;
+				})()
+			: undefined;
+
 	return {
 		success: true,
 		data: {
@@ -115,6 +128,7 @@ export async function scrapeRealtListing(url: string): Promise<ScrapeResult> {
 			location,
 			...(areaTotal != null && areaTotal > 0 && { area: areaTotal }),
 			...(typeof imageUrl === "string" && imageUrl && { imageUrl }),
+			...(listedAt != null && { listedAt }),
 		},
 	};
 }

@@ -33,6 +33,12 @@ export default function FlatsPage({ params, searchParams }: FlatsPageProps) {
 			void utils.flat.listFlats.invalidate();
 		},
 	});
+	const reloadAllFlats = api.flat.reloadAllFlats.useMutation({
+		onSuccess: () => {
+			void utils.flat.listFlats.invalidate();
+			void utils.rank.getRankedFlats.invalidate();
+		},
+	});
 
 	const flats = listFlats.data ?? [];
 
@@ -118,7 +124,25 @@ export default function FlatsPage({ params, searchParams }: FlatsPageProps) {
 
 				{/* List */}
 				<section>
-					<h2 className="mb-4 font-semibold text-text text-xl">Flats</h2>
+					<div className="mb-4 flex flex-wrap items-center gap-3">
+						<h2 className="font-semibold text-text text-xl">Flats</h2>
+						<button
+							aria-label="Rescrape all flats"
+							className="rounded border border-border px-3 py-1.5 text-sm text-text-muted hover:bg-border/50 disabled:opacity-50"
+							disabled={reloadAllFlats.isPending || flats.length === 0}
+							onClick={() => reloadAllFlats.mutate()}
+							type="button"
+						>
+							{reloadAllFlats.isPending ? "Queuing…" : "Rescrape all"}
+						</button>
+						{reloadAllFlats.isSuccess &&
+							reloadAllFlats.data?.queued != null && (
+								<span className="text-sm text-text-subtle">
+									Queued {reloadAllFlats.data.queued} flat
+									{reloadAllFlats.data.queued === 1 ? "" : "s"}
+								</span>
+							)}
+					</div>
 					{listFlats.isLoading && <p className="text-text-muted">Loading…</p>}
 					{listFlats.isSuccess && flats.length === 0 && (
 						<p className="text-text-muted">

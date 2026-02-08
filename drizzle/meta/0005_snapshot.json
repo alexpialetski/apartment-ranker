@@ -1,0 +1,231 @@
+{
+	"version": "6",
+	"dialect": "sqlite",
+	"id": "1b4a5437-d70a-4095-a712-e7eb3cbbe265",
+	"prevId": "5ca90301-6fc5-4b7c-80f8-35b066559d78",
+	"tables": {
+		"apartment-ranker_comparison": {
+			"name": "apartment-ranker_comparison",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": true
+				},
+				"winnerId": {
+					"name": "winnerId",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"loserId": {
+					"name": "loserId",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"createdAt": {
+					"name": "createdAt",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false,
+					"default": "(unixepoch())"
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"apartment-ranker_comparison_winnerId_apartment-ranker_flat_id_fk": {
+					"name": "apartment-ranker_comparison_winnerId_apartment-ranker_flat_id_fk",
+					"tableFrom": "apartment-ranker_comparison",
+					"tableTo": "apartment-ranker_flat",
+					"columnsFrom": ["winnerId"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"apartment-ranker_comparison_loserId_apartment-ranker_flat_id_fk": {
+					"name": "apartment-ranker_comparison_loserId_apartment-ranker_flat_id_fk",
+					"tableFrom": "apartment-ranker_comparison",
+					"tableTo": "apartment-ranker_flat",
+					"columnsFrom": ["loserId"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"apartment-ranker_flat": {
+			"name": "apartment-ranker_flat",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": true
+				},
+				"realtUrl": {
+					"name": "realtUrl",
+					"type": "text(2048)",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"price": {
+					"name": "price",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"pricePerSqm": {
+					"name": "pricePerSqm",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"rooms": {
+					"name": "rooms",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"location": {
+					"name": "location",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"area": {
+					"name": "area",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"imageUrl": {
+					"name": "imageUrl",
+					"type": "text(2048)",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"scrapeStatus": {
+					"name": "scrapeStatus",
+					"type": "text(32)",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false,
+					"default": "'pending'"
+				},
+				"eloRating": {
+					"name": "eloRating",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false,
+					"default": 1500
+				},
+				"ratingDeviation": {
+					"name": "ratingDeviation",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false,
+					"default": 350
+				},
+				"volatility": {
+					"name": "volatility",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false,
+					"default": 0.06
+				},
+				"band": {
+					"name": "band",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"listedAt": {
+					"name": "listedAt",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"createdAt": {
+					"name": "createdAt",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false,
+					"default": "(unixepoch())"
+				},
+				"updatedAt": {
+					"name": "updatedAt",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				},
+				"deletedAt": {
+					"name": "deletedAt",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
+				}
+			},
+			"indexes": {
+				"apartment-ranker_flat_realtUrl_unique": {
+					"name": "apartment-ranker_flat_realtUrl_unique",
+					"columns": ["realtUrl"],
+					"isUnique": true
+				},
+				"flat_scrape_status_idx": {
+					"name": "flat_scrape_status_idx",
+					"columns": ["scrapeStatus"],
+					"isUnique": false
+				},
+				"flat_band_idx": {
+					"name": "flat_band_idx",
+					"columns": ["band"],
+					"isUnique": false
+				},
+				"flat_band_elo_idx": {
+					"name": "flat_band_elo_idx",
+					"columns": ["band", "eloRating"],
+					"isUnique": false
+				}
+			},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		}
+	},
+	"views": {},
+	"enums": {},
+	"_meta": {
+		"schemas": {},
+		"tables": {},
+		"columns": {}
+	},
+	"internal": {
+		"indexes": {}
+	}
+}

@@ -21,6 +21,8 @@ export interface Flat {
 	ratingDeviation: number;
 	volatility: number;
 	band: string | null;
+	/** Date when the flat was listed for sale (from Realt.by createdAt). */
+	listedAt: Date | null;
 	createdAt: Date;
 	updatedAt: Date | null;
 	deletedAt: Date | null;

@@ -21,6 +21,7 @@ export function createScrapeEventPublisher(): IScrapeEventPublisher {
 					imageUrl: flat.imageUrl,
 					scrapeStatus: flat.scrapeStatus,
 					band: flat.band,
+					listedAt: flat.listedAt,
 				},
 			});
 		},

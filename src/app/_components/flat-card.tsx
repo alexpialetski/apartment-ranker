@@ -98,6 +98,9 @@ export function FlatCard({
 							{flat.rooms != null ? `${flat.rooms} room(s)` : ""}
 							{flat.area != null ? ` · ${flat.area} m²` : ""}
 							{flat.location ? ` · ${flat.location}` : ""}
+							{flat.listedAt != null
+								? ` · Listed ${new Date(flat.listedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`
+								: ""}
 						</div>
 					</div>
 					<div className="mt-3 flex flex-wrap gap-2">

@@ -33,6 +33,7 @@ function rowToFlat(row: {
 	ratingDeviation: number | null;
 	volatility: number | null;
 	band: string | null;
+	listedAt: Date | number | null;
 	createdAt: Date | number;
 	updatedAt: Date | number | null;
 	deletedAt: Date | number | null;
@@ -51,6 +52,7 @@ function rowToFlat(row: {
 		ratingDeviation: row.ratingDeviation ?? DEFAULT_RD,
 		volatility: row.volatility ?? DEFAULT_VOLATILITY,
 		band: row.band,
+		listedAt: row.listedAt != null ? toDate(row.listedAt) : null,
 		createdAt: toDate(row.createdAt),
 		updatedAt: row.updatedAt != null ? toDate(row.updatedAt) : null,
 		deletedAt: row.deletedAt != null ? toDate(row.deletedAt) : null,

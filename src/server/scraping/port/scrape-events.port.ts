@@ -10,6 +10,7 @@ export interface ScrapeSuccessFlatPayload {
 	imageUrl: string | null;
 	scrapeStatus: string;
 	band: string | null;
+	listedAt: Date | null;
 }
 
 export interface IScrapeEventPublisher {

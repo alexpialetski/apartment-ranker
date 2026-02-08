@@ -8,6 +8,7 @@ import type { Flat } from "~/server/flat/domain/flat";
 import * as addFlatByUrlUC from "~/server/flat/use-cases/add-flat-by-url";
 import * as getFlatUC from "~/server/flat/use-cases/get-flat";
 import * as listFlatsUC from "~/server/flat/use-cases/list-flats";
+import * as reloadAllFlatsUC from "~/server/flat/use-cases/reload-all-flats";
 import * as reloadFlatUC from "~/server/flat/use-cases/reload-flat";
 import * as removeFlatByUrlUC from "~/server/flat/use-cases/remove-flat-by-url";
 import type { BandRanking } from "~/server/ranking/use-cases/get-ranked-flats";
@@ -41,6 +42,7 @@ export interface UseCasesContainer {
 	listFlats: () => Promise<Flat[]>;
 	getFlat: (input: { id: number }) => Promise<Flat | null>;
 	reloadFlat: (input: { id: number }) => Promise<{ ok: true }>;
+	reloadAllFlats: () => Promise<{ queued: number }>;
 	processScrapeJob: (input: { flatId: number }) => Promise<void>;
 	getComparisonPair: (input: {
 		band?: string;
@@ -80,6 +82,8 @@ export function buildUseCases(deps?: BuildUseCasesDeps): UseCasesContainer {
 		getFlat: (input) => getFlatUC.getFlat({ flatRepo }, input),
 		reloadFlat: (input) =>
 			reloadFlatUC.reloadFlat({ flatRepo, scrapeQueue }, input),
+		reloadAllFlats: () =>
+			reloadAllFlatsUC.reloadAllFlats({ flatRepo, scrapeQueue }),
 		processScrapeJob: (input) =>
 			processScrapeJobUC.processScrapeJob(
 				{ flatRepo, scraper, eventPublisher, getBandLabel },

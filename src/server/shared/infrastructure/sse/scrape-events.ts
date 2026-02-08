@@ -26,6 +26,7 @@ export type ScrapeEvent =
 				imageUrl: string | null;
 				scrapeStatus: string;
 				band: string | null;
+				listedAt: Date | null;
 			};
 	  }
 	| {

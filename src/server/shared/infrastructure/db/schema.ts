@@ -35,6 +35,8 @@ export const flats = createTable(
 		volatility: d.real().default(0.06),
 		/** Band = room count + price-per-m² range, e.g. "1-room_1800-1900". Used to compare/rank only within same band. */
 		band: d.text(),
+		/** Date when the flat was listed for sale (from Realt.by createdAt). */
+		listedAt: d.integer({ mode: "timestamp" }),
 		createdAt: d
 			.integer({ mode: "timestamp" })
 			.default(sql`(unixepoch())`)

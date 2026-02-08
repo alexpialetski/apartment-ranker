@@ -48,6 +48,13 @@ export async function processScrapeJob(
 	if (result.success) {
 		log.debug({ flatId }, "Scrape success");
 		const band = deps.getBandLabel(result.data.rooms, result.data.pricePerSqm);
+		const listedAt =
+			result.data.listedAt != null
+				? (() => {
+						const d = new Date(result.data.listedAt);
+						return Number.isFinite(d.getTime()) ? d : null;
+					})()
+				: null;
 		await deps.flatRepo.update(flatId, {
 			price: result.data.price,
 			pricePerSqm: result.data.pricePerSqm,
@@ -57,6 +64,7 @@ export async function processScrapeJob(
 			imageUrl: result.data.imageUrl ?? null,
 			scrapeStatus: "success",
 			band,
+			listedAt,
 		});
 		const updated = await deps.flatRepo.findById(flatId);
 		if (updated && updated.scrapeStatus === "success") {
@@ -71,6 +79,7 @@ export async function processScrapeJob(
 				imageUrl: updated.imageUrl,
 				scrapeStatus: updated.scrapeStatus,
 				band: updated.band,
+				listedAt: updated.listedAt,
 			};
 			deps.eventPublisher.publishSuccess(flatId, payload);
 		}

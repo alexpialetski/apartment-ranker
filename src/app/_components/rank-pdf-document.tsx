@@ -52,11 +52,6 @@ const styles = StyleSheet.create({
 		fontSize: 10,
 		color: "#1c1917",
 	},
-	link: {
-		fontSize: 10,
-		color: "#0f766e",
-		textDecoration: "none",
-	},
 });
 
 function formatFlatLine(flat: RankedFlats[number]["flats"][number]): string {
@@ -66,6 +61,10 @@ function formatFlatLine(flat: RankedFlats[number]["flats"][number]): string {
 	if (flat.rooms != null) parts.push(`${flat.rooms} room(s)`);
 	if (flat.area != null) parts.push(`${flat.area} m²`);
 	if (flat.location) parts.push(flat.location);
+	if (flat.listedAt != null)
+		parts.push(
+			`Listed ${new Date(flat.listedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`,
+		);
 	return parts.join(" · ") || "—";
 }
 
@@ -81,7 +80,6 @@ export function RankPdfDocument({ ranked }: { ranked: RankedFlats }) {
 							<Link key={flat.id} src={flat.realtUrl} style={styles.row}>
 								<Text style={styles.index}>{index + 1}</Text>
 								<Text style={styles.details}>{formatFlatLine(flat)}</Text>
-								<Text style={styles.link}>Open on Realt</Text>
 							</Link>
 						))}
 					</View>
